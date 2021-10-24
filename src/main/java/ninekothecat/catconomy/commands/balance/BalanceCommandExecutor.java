@@ -1,4 +1,4 @@
-package ninekothecat.catconomy.commands;
+package ninekothecat.catconomy.commands.balance;
 
 import ninekothecat.catconomy.Catconomy;
 import org.bukkit.Bukkit;
@@ -38,16 +38,14 @@ public class BalanceCommandExecutor implements CommandExecutor {
     }
 
     private void getOtherPlayersMoneyAmount(CommandSender sender, String[] args, String shortPrefix) {
-        final Player[] player = new Player[]{null};
-        for (Player player1 : Bukkit.getServer().getOnlinePlayers())
-            if (player1.getDisplayName().toUpperCase(Locale.ROOT).equals(args[0].toUpperCase(Locale.ROOT)))
-                player[0] = player1;
 
-        if (player[0] != null && Catconomy.getBalanceHandler().userExists(player[0].getUniqueId())) {
-            final String MONEY_AMOUNT = Double.toString(Catconomy.getBalanceHandler().getBalance(player[0].getUniqueId()));
+        Player player = Catconomy.getPlayerFromName(args[0]);
+
+        if (player != null && Catconomy.getBalanceHandler().userExists(player.getUniqueId())) {
+            final String MONEY_AMOUNT = Double.toString(Catconomy.getBalanceHandler().getBalance(player.getUniqueId()));
             sender.sendMessage(MessageFormat.format("{0}{1}s balance is : {2}{3} {4}{5}",
                     ChatColor.YELLOW,
-                    player[0].getDisplayName(),
+                    player.getDisplayName(),
                     ChatColor.GOLD,
                     MONEY_AMOUNT,
                     ChatColor.AQUA,

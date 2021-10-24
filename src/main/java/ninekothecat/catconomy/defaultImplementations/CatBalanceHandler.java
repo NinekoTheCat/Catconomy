@@ -99,6 +99,9 @@ public class CatBalanceHandler implements IBalanceHandler {
     }
 
     private TransactionResult transferCurrency(UUID fromUser, UUID toUser, double amount) {
+        if (fromUser == toUser){
+            return TransactionResult.ILLEGAL_TRANSACTION;
+        }
         if (amount <= 0) {
             return TransactionResult.ILLEGAL_TRANSACTION;
         }
@@ -109,6 +112,7 @@ public class CatBalanceHandler implements IBalanceHandler {
         if ((fromUserMoney - amount) < 0) {
             return TransactionResult.INSUFFICIENT_AMOUNT_OF_CURRENCY;
         }
+
         double toUserMoney = usersCache.get(toUser) + amount;
         fromUserMoney -= amount;
         usersCache.put(toUser, toUserMoney);

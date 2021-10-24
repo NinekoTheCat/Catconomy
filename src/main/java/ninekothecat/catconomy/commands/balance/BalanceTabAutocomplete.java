@@ -1,4 +1,4 @@
-package ninekothecat.catconomy.commands;
+package ninekothecat.catconomy.commands.balance;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;

@@ -52,22 +52,13 @@ public class CatVaultIntegration implements Economy {
 
     @Override
     public boolean hasAccount(String playerName) {
-        Player player = getPlayerFromName(playerName);
+        Player player = Catconomy.getPlayerFromName(playerName);
         if (player != null){
                 return Catconomy.getBalanceHandler().userExists(player.getUniqueId());
             }else {
                 return  false;
             }
 
-    }
-
-    @Nullable
-    private Player getPlayerFromName(String playerName) {
-        Player player = null;
-        for (Player player1 : Bukkit.getServer().getOnlinePlayers())
-            if (player1.getDisplayName().toUpperCase(Locale.ROOT).equals(playerName.toUpperCase(Locale.ROOT)))
-                player = player1;
-        return player;
     }
 
     @Override
@@ -87,7 +78,7 @@ public class CatVaultIntegration implements Economy {
 
     @Override
     public double getBalance(String playerName) {
-        return Catconomy.getBalanceHandler().getBalance(Objects.requireNonNull(getPlayerFromName(playerName)).getUniqueId());
+        return Catconomy.getBalanceHandler().getBalance(Objects.requireNonNull(Catconomy.getPlayerFromName(playerName)).getUniqueId());
     }
 
     @Override
@@ -131,7 +122,7 @@ public class CatVaultIntegration implements Economy {
                 true,
                 amount,
                 null,
-                new ArrayList<>(Collections.singleton(Objects.requireNonNull(getPlayerFromName(playerName)).getUniqueId())));
+                new ArrayList<>(Collections.singleton(Objects.requireNonNull(Catconomy.getPlayerFromName(playerName)).getUniqueId())));
         TransactionResult result = Catconomy.getBalanceHandler().doTransaction(transaction);
         return new EconomyResponse(amount,getBalance(playerName),TransactionResult.toEconomyResponseType(result),result.toString());
     }
@@ -159,7 +150,7 @@ public class CatVaultIntegration implements Economy {
 
     @Override
     public EconomyResponse depositPlayer(String playerName, double amount) {
-        Player player = getPlayerFromName(playerName);
+        Player player = Catconomy.getPlayerFromName(playerName);
         assert player != null;
         CatTransaction transaction = new CatTransaction(TransactionType.GIVE_CURRENCY,
                 true,
@@ -253,7 +244,7 @@ public class CatVaultIntegration implements Economy {
 
     @Override
     public boolean createPlayerAccount(String playerName) {
-        Player player = getPlayerFromName(playerName);
+        Player player = Catconomy.getPlayerFromName(playerName);
         assert player != null;
         CatTransaction transaction = new CatTransaction(TransactionType.CREATE_USER,
                 true,
