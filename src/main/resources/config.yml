@@ -1,0 +1,8 @@
+#your database of choice
+database: 'MapDBFile'
+# the prefix you'd like your currency to have
+
+#The long version of the prefix
+Lprefix: 'CatCoins'
+#The short version of the prefix
+Sprefix: 'CC'

@@ -1,0 +1,10 @@
+name: Catconomy
+version: '${version}'
+main: ninekothecat.catconomy.Catconomy
+load: STARTUP
+softdepend: [Vault]
+authors: [ nikothenya ]
+description: an economy plugin that does not care about the database you use
+commands:
+  balance:
+    description: "get your or another player's balance"
