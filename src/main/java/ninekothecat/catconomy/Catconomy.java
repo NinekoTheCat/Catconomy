@@ -1,6 +1,9 @@
 package ninekothecat.catconomy;
 
 import net.milkbowl.vault.economy.Economy;
+import ninekothecat.catconomy.commands.catconomycommand.CatEconomyCommand;
+import ninekothecat.catconomy.commands.catconomycommand.CatEconomyCommandHandler;
+import ninekothecat.catconomy.commands.catconomycommand.CatEconomyCommandHandlerAutoCompleter;
 import ninekothecat.catconomy.commands.balance.BalanceCommandExecutor;
 import ninekothecat.catconomy.commands.balance.BalanceTabAutocomplete;
 import ninekothecat.catconomy.commands.deposit.DepositCommandExecutor;
@@ -39,6 +42,7 @@ public final class Catconomy extends JavaPlugin {
     public static Logger logger;
     public static ICurrencyPrefix prefix;
     private static IBalanceHandler balanceHandler = new CatBalanceHandler();
+    public static CatEconomyCommandHandler catEconomyCommandHandler= new CatEconomyCommandHandler();
 
     public static IBalanceHandler getBalanceHandler() {
         return balanceHandler;
@@ -61,12 +65,16 @@ public final class Catconomy extends JavaPlugin {
 
         setDatabase();
         setPrefix();
-
+        catEconomyCommandHandler = new CatEconomyCommandHandler();
         Objects.requireNonNull(this.getCommand("balance")).setTabCompleter(new BalanceTabAutocomplete());
         Objects.requireNonNull(this.getCommand("balance")).setExecutor(new BalanceCommandExecutor());
         Objects.requireNonNull(this.getCommand("deposit")).setExecutor(new DepositCommandExecutor());
-        Objects.requireNonNull(this.getCommand("give")).setExecutor(new GiveCommandExecutor());
-        Objects.requireNonNull(this.getCommand("take")).setExecutor(new TakeCommandExecutor());
+        Objects.requireNonNull(this.getCommand("catconomy")).setExecutor(catEconomyCommandHandler);
+        Objects.requireNonNull(this.getCommand("catconomy")).setTabCompleter(new CatEconomyCommandHandlerAutoCompleter());
+        makeCatConomyCommand("give");
+        makeCatConomyCommand("take");
+        catEconomyCommandHandler.get("give").setExecutor(new GiveCommandExecutor());
+        catEconomyCommandHandler.get("take").setExecutor(new TakeCommandExecutor());
         this.getServer().getPluginManager().registerEvents(new CatPlayerJoinHandler(), this);
         this.getServer().getPluginManager().registerEvents(new CatPlayerLeaveHandler(),this);
         if (getServer().getPluginManager().getPlugin("Vault") != null){
@@ -74,6 +82,11 @@ public final class Catconomy extends JavaPlugin {
             enableVaultIntegration();
         }
     }
+
+    private static void makeCatConomyCommand(String name) {
+        catEconomyCommandHandler.put(name, new CatEconomyCommand(name));
+    }
+
     private void enableVaultIntegration(){
         this.getServer().getServicesManager().register(Economy.class,
                  new CatVaultIntegration(),
