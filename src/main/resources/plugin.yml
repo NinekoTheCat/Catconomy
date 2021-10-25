@@ -11,7 +11,6 @@ commands:
   deposit:
     description: "transfer money to another player"
     aliases: ['pay']
-  give:
-    description: "give x amount of money to someone"
-  take:
-    description: "take x amount of money from someone"
+  catconomy:
+    description: "catconomy commands"
+    aliases: ['cc']

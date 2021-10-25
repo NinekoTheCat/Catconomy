@@ -3,6 +3,7 @@ package ninekothecat.catconomy.commands.take;
 import ninekothecat.catconomy.Catconomy;
 import ninekothecat.catconomy.defaultImplementations.CatTransaction;
 import ninekothecat.catconomy.enums.TransactionType;
+import ninekothecat.catconomy.interfaces.ICatEconomyCommandExecutor;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -16,7 +17,7 @@ import java.util.Collections;
 import java.util.Objects;
 import java.util.UUID;
 
-public class TakeCommandExecutor implements CommandExecutor {
+public class TakeCommandExecutor implements ICatEconomyCommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player)){

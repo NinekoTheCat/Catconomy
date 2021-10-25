@@ -174,7 +174,9 @@ public class CatBalanceHandler implements IBalanceHandler {
     @Override
     public void syncPlayerOnLeave(UUID user) {
         if (Catconomy.database.userExists(user)){
-            Catconomy.database.setUserBalance(user,this.usersCache.get(user));
+            if (!this.usersCache.get(user).isNaN()){
+                Catconomy.database.setUserBalance(user,this.usersCache.get(user));
+            }
             usersCache.remove(user);
         }
     }
