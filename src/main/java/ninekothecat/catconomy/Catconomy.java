@@ -7,7 +7,7 @@ import ninekothecat.catconomy.commands.deposit.DepositCommandExecutor;
 import ninekothecat.catconomy.commands.give.GiveCommandExecutor;
 import ninekothecat.catconomy.commands.take.TakeCommandExecutor;
 import ninekothecat.catconomy.defaultImplementations.CatBalanceHandler;
-import ninekothecat.catconomy.defaultImplementations.CatMapDBDatabase;
+import ninekothecat.catconomy.defaultImplementations.database.CatMapDBDatabase;
 import ninekothecat.catconomy.defaultImplementations.CatPermissionGuard;
 import ninekothecat.catconomy.defaultImplementations.CatPrefix;
 import ninekothecat.catconomy.enums.DefaultDatabaseType;
