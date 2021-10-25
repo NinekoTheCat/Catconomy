@@ -25,6 +25,8 @@ public interface IDatabase {
      */
     void removeUser(UUID user);
 
+    void setUserBalance(UUID user, double balance);
+
     /**
      * Sets a batch of users' balance.
      *

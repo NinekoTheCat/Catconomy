@@ -12,6 +12,7 @@ import ninekothecat.catconomy.defaultImplementations.CatPermissionGuard;
 import ninekothecat.catconomy.defaultImplementations.CatPrefix;
 import ninekothecat.catconomy.enums.DefaultDatabaseType;
 import ninekothecat.catconomy.eventlisteners.CatPlayerJoinHandler;
+import ninekothecat.catconomy.eventlisteners.CatPlayerLeaveHandler;
 import ninekothecat.catconomy.integrations.CatVaultIntegration;
 import ninekothecat.catconomy.interfaces.IBalanceHandler;
 import ninekothecat.catconomy.interfaces.ICurrencyPrefix;
@@ -61,6 +62,7 @@ public final class Catconomy extends JavaPlugin {
         Objects.requireNonNull(this.getCommand("give")).setExecutor(new GiveCommandExecutor());
         Objects.requireNonNull(this.getCommand("take")).setExecutor(new TakeCommandExecutor());
         this.getServer().getPluginManager().registerEvents(new CatPlayerJoinHandler(), this);
+        this.getServer().getPluginManager().registerEvents(new CatPlayerLeaveHandler(),this);
         if (getServer().getPluginManager().getPlugin("Vault") != null){
             this.getLogger().info("Found vault plugin! Enabling");
             enableVaultIntegration();

@@ -22,4 +22,8 @@ public interface IBalanceHandler {
     double getBalance(UUID user);
 
     void saveAll();
+
+    void syncPlayerOnJoin(UUID user);
+
+    void syncPlayerOnLeave(UUID user);
 }
