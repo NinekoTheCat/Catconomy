@@ -24,7 +24,16 @@ public class TakeCommandExecutor implements CommandExecutor {
         }
         if (args.length == 2){
             ArrayList<UUID> usersInvolved = new ArrayList<>(Collections.singleton(Objects.requireNonNull(Catconomy.getPlayerFromName(args[0])).getUniqueId()));
-            double amount = Double.parseDouble(args[1]);
+            double amount;
+            try {
+                amount = Double.parseDouble(args[1]);
+            }catch (NumberFormatException exception){
+                sender.sendMessage(ChatColor.RED + "Not a valid Number");
+                return false;
+            }
+            if (Double.isNaN(amount)){
+                return false;
+            }
             if (amount <= 0){
                 return false;
             }

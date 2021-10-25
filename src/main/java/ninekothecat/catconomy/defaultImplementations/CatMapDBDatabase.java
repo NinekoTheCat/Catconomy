@@ -40,6 +40,15 @@ public class CatMapDBDatabase implements IDatabase {
     }
 
     @Override
+    public void setUserBalance(UUID user, double balance) {
+        DB db = fileDB.make();
+        ConcurrentMap<UUID, Double> user_map = (ConcurrentMap<UUID, Double>) db.hashMap("accounts").createOrOpen();
+        user_map.put(user,balance);
+        db.commit();
+        db.close();
+    }
+
+    @Override
     public void setUsersBalance(Map<UUID, Double> userBalances) {
         DB db = fileDB.make();
         ConcurrentMap<UUID, Double> user_map = (ConcurrentMap<UUID, Double>) db.hashMap("accounts").createOrOpen();

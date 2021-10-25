@@ -22,11 +22,21 @@ public class DepositCommandExecutor implements CommandExecutor {
         if (args.length == 2){
             Player player = Catconomy.getPlayerFromName(args[0]);
             if (player != null && sender instanceof Player){
-                if (Double.parseDouble(args[1])  > 0){
+                double amount;
+                try {
+                     amount = Double.parseDouble(args[1]);
+                }catch (NumberFormatException exception){
+                    sender.sendMessage(ChatColor.RED + "Not a valid Number");
+                    return false;
+                }
+                if (Double.isNaN(amount)){
+                    return false;
+                }
+                if (amount > 0){
                     ArrayList<UUID> involved = new ArrayList<>(Arrays.asList(
                             Objects.requireNonNull(((Player) sender).getPlayer()).getUniqueId(),
                             player.getUniqueId()));
-                    double amount = Double.parseDouble(args[1]);
+
                     CatTransaction catTransaction = new CatTransaction(TransactionType.TRANSFER_CURRENCY,
                             false,
                             amount,

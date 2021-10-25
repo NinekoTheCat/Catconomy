@@ -14,7 +14,8 @@ public class CatPlayerJoinHandler implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerJoin(PlayerJoinEvent event) {
-        if (!Catconomy.database.userExists(event.getPlayer().getUniqueId())) {
+        Catconomy.getBalanceHandler().syncPlayerOnJoin(event.getPlayer().getUniqueId());
+        if (!Catconomy.getBalanceHandler().userExists(event.getPlayer().getUniqueId())) {
             CatTransaction transaction = new CatTransaction(TransactionType.CREATE_USER, true,
                     100d, null, new ArrayList<>(Collections.singletonList(event.getPlayer().getUniqueId())));
             Catconomy.getBalanceHandler().doTransaction(transaction);
