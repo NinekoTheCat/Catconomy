@@ -7,9 +7,10 @@ import ninekothecat.catconomy.commands.deposit.DepositCommandExecutor;
 import ninekothecat.catconomy.commands.give.GiveCommandExecutor;
 import ninekothecat.catconomy.commands.take.TakeCommandExecutor;
 import ninekothecat.catconomy.defaultImplementations.CatBalanceHandler;
-import ninekothecat.catconomy.defaultImplementations.CatMapDBDatabase;
+import ninekothecat.catconomy.defaultImplementations.database.CatMapDBDatabase;
 import ninekothecat.catconomy.defaultImplementations.CatPermissionGuard;
 import ninekothecat.catconomy.defaultImplementations.CatPrefix;
+import ninekothecat.catconomy.defaultImplementations.database.SQL.CatSQLDatabase;
 import ninekothecat.catconomy.enums.DefaultDatabaseType;
 import ninekothecat.catconomy.eventlisteners.CatPlayerJoinHandler;
 import ninekothecat.catconomy.eventlisteners.CatPlayerLeaveHandler;
@@ -20,18 +21,22 @@ import ninekothecat.catconomy.interfaces.IDatabase;
 import ninekothecat.catconomy.interfaces.IPermissionGuard;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.sql.SQLException;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 public final class Catconomy extends JavaPlugin {
     public static final IPermissionGuard permissionGuard = new CatPermissionGuard();
     public static IDatabase database;
+    public static Logger logger;
     public static ICurrencyPrefix prefix;
     private static IBalanceHandler balanceHandler = new CatBalanceHandler();
 
@@ -48,6 +53,7 @@ public final class Catconomy extends JavaPlugin {
     @Override
     public void onEnable() {
         // Plugin startup logic
+        logger = this.getLogger();
         File configFile = new File(getDataFolder(), "config.yml");
         if (!configFile.exists()) {
             this.saveDefaultConfig();
@@ -85,14 +91,26 @@ public final class Catconomy extends JavaPlugin {
 
     private void setDatabase() {
         try {
-            if (DefaultDatabaseType.valueOf(this.getConfig().getString("database")) == DefaultDatabaseType.MapDBFile) {
-                database = new CatMapDBDatabase();
-            } else {
-                throw new IllegalStateException("Unexpected value: " + DefaultDatabaseType.valueOf(this.getConfig().getString("database")));
+            switch (DefaultDatabaseType.valueOf(this.getConfig().getString("database"))) {
+                case MapDBFile:
+                    database = new CatMapDBDatabase();
+                    break;
+                case SQL:
+                    YamlConfiguration yamlConfiguration = loadConfiguration("Sql.yml");
+                    database = new CatSQLDatabase(yamlConfiguration.getString("user"),
+                            yamlConfiguration.getString("password"),
+                            yamlConfiguration.getString("host"),
+                            yamlConfiguration.getString("database_name"),
+                            yamlConfiguration.getString("port") );
+                    break;
+                default:
+                    throw new IllegalStateException("Unexpected value: "
+                            + DefaultDatabaseType.valueOf(this.getConfig().getString("database")));
             }
-        } catch (IllegalArgumentException exception) {
+        } catch (IllegalArgumentException | SQLException exception) {
             database = null;
             exception.printStackTrace();
+            this.getServer().getPluginManager().disablePlugin(this);
         }
     }
 
@@ -116,5 +134,12 @@ public final class Catconomy extends JavaPlugin {
                         player = player1.getPlayer();
             }
         return player;
+    }
+    private YamlConfiguration loadConfiguration(String file) {
+        File file1 = new File(this.getDataFolder() , file);
+        if (!file1.exists()){
+            this.saveResource(file,false);
+        }
+        return YamlConfiguration.loadConfiguration(file1);
     }
 }

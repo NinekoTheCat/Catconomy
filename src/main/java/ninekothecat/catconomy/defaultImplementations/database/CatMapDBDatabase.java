@@ -1,4 +1,4 @@
-package ninekothecat.catconomy.defaultImplementations;
+package ninekothecat.catconomy.defaultImplementations.database;
 
 import ninekothecat.catconomy.Catconomy;
 import ninekothecat.catconomy.interfaces.IDatabase;
