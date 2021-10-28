@@ -4,6 +4,7 @@ import ninekothecat.catconomy.Catconomy;
 import ninekothecat.catconomy.defaultImplementations.CatTransaction;
 import ninekothecat.catconomy.enums.TransactionType;
 import ninekothecat.catconomy.interfaces.ICatEconomyCommandExecutor;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -11,10 +12,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 public class TakeCommandExecutor implements ICatEconomyCommandExecutor {
     @Override
@@ -37,7 +35,17 @@ public class TakeCommandExecutor implements ICatEconomyCommandExecutor {
             if (amount <= 0) {
                 return false;
             }
-            CatTransaction transaction = new CatTransaction(TransactionType.SUBTRACT_CURRENCY, false, amount, ((Player) sender).getUniqueId(), usersInvolved);
+            Set<String> strings = new HashSet<>();
+            for (UUID user:usersInvolved) {
+                strings.add(Bukkit.getPlayer(user).getDisplayName());
+            }
+            CatTransaction transaction = new CatTransaction(TransactionType.SUBTRACT_CURRENCY,
+                    false,
+                    amount,
+                    ((Player) sender).getUniqueId(),
+                    usersInvolved,
+                    String.format("%s Removed %s from %s (%s)", ((Player) sender).getDisplayName(), amount,
+                            Arrays.toString(strings.toArray()),Arrays.toString(usersInvolved.toArray())), Catconomy.getProvidingPlugin(Catconomy.class));
             switch (Catconomy.getBalanceHandler().doTransaction(transaction)) {
                 case INSUFFICIENT_AMOUNT_OF_CURRENCY:
                     sender.sendMessage(ChatColor.DARK_RED + "FAILED TRANSACTION DUE TO INSUFFICIENT AMOUNT OF CURRENCY");

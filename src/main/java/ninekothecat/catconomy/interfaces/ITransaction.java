@@ -1,7 +1,9 @@
 package ninekothecat.catconomy.interfaces;
 
 import ninekothecat.catconomy.enums.TransactionType;
+import org.bukkit.plugin.Plugin;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -9,6 +11,21 @@ import java.util.UUID;
  * The interface Transaction.
  */
 public interface ITransaction {
+
+    /**
+     * Gets the plugin that initiated the transaction.
+     *
+     * @return the plugin
+     */
+    Plugin getPlugin();
+
+    /**
+     * Gets the transaction message.
+     *
+     * @return the message
+     */
+    String getMessage();
+
     /**
      * Gets transaction type.
      *
@@ -19,7 +36,7 @@ public interface ITransaction {
     /**
      * if the server console is the issuer of the transaction returns true.
      *
-     * @return isConsole
+     * @return isConsole boolean
      */
     boolean isConsole();
 
@@ -39,5 +56,10 @@ public interface ITransaction {
      */
     Collection<UUID> getUsersInvolved();
 
+    /**
+     * Gets amount.
+     *
+     * @return the amount
+     */
     Double getAmount();
 }

@@ -15,6 +15,11 @@ import java.util.stream.Collectors;
 public class CatBalanceHandler implements IBalanceHandler {
     private final HashMap<UUID, IUser> userMoney = new HashMap<>();
     private boolean dirty = false;
+    private boolean doLogs;
+
+    public CatBalanceHandler(boolean doLogs) {
+        this.doLogs = doLogs;
+    }
 
     @Override
     public TransactionResult doTransaction(ITransaction transaction) {
@@ -55,6 +60,12 @@ public class CatBalanceHandler implements IBalanceHandler {
             }
             if (result == TransactionResult.SUCCESS) {
                 dirty = true;
+                if (doLogs){
+                    Catconomy.iCatLogger.success(transaction);
+                }
+
+            }else if (doLogs){
+                Catconomy.iCatLogger.fail(transaction,result);
             }
             return result;
         }

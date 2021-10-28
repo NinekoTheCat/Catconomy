@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+    <log4j:configuration xmlns:log4j='http://jakarta.apache.org/log4j/'>
+    <Appenders>
+        <RollingFile name="roll-by-size" fileName = "CCLogs/transaction.log"
+                     filePattern ="CClogs/CC.%d{yyyy-MM-dd-HH}.%i.log.gz">
+            <Policies>
+                <OnStartupTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="1000MB" />
+                <TimeBasedTriggeringPolicy />
+            </Policies>
+            <PatternLayout>
+                <Pattern>[%d] [%t/%level] [%marker]: %msg%n</Pattern>
+            </PatternLayout>
+        </RollingFile>
+    </Appenders>
+        <Loggers>
+            <Logger additivity="false" name="CCTransactionLogger" level="debug"  >
+                <appender-ref ref="roll-by-size" />
+            </Logger>
+        </Loggers>
+    </log4j:configuration>
