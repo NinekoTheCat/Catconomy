@@ -6,7 +6,9 @@ plugins {
 
 group = 'ninekothecat'
 version = '0.0.4'
-
+shadowJar {
+    minimize()
+}
 repositories {
     mavenCentral()
     maven { url 'https://jitpack.io' }

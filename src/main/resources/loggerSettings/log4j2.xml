@@ -3,7 +3,7 @@
     <log4j:configuration xmlns:log4j='http://jakarta.apache.org/log4j/'>
     <Appenders>
         <RollingFile name="roll-by-size" fileName = "CCLogs/transaction.log"
-                     filePattern ="CClogs/CC.%d{yyyy-MM-dd-HH}.%i.log.gz">
+                     filePattern ="CCLogs/CC.%d{yyyy-MM-dd-HH}.%i.log.gz">
             <Policies>
                 <OnStartupTriggeringPolicy />
                 <SizeBasedTriggeringPolicy size="1000MB" />
