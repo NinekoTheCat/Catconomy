@@ -6,3 +6,6 @@ database: 'MapDBFile'
 Lprefix: 'CatCoins'
 #The short version of the prefix
 Sprefix: 'CC'
+
+# if you want to change how often the plugin maintains its internal database sync then uncomment this
+# maintain_delay: 360000

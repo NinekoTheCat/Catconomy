@@ -6,15 +6,18 @@ import ninekothecat.catconomy.interfaces.ICatEconomyCommandExecutor;
 public class CatEconomyCommand {
     private ICatEconomyCommandAutoComplete autoComplete = null;
     private ICatEconomyCommandExecutor executor = null;
+    private String name;
 
-    public boolean hasAutoComplete(){
-        return autoComplete != null;
-    }
-    public boolean hasExecutor(){
-        return executor != null;
-    }
     public CatEconomyCommand(String name) {
         this.name = name;
+    }
+
+    public boolean hasAutoComplete() {
+        return autoComplete != null;
+    }
+
+    public boolean hasExecutor() {
+        return executor != null;
     }
 
     public ICatEconomyCommandAutoComplete getAutoComplete() {
@@ -40,6 +43,4 @@ public class CatEconomyCommand {
     public void setName(String name) {
         this.name = name;
     }
-
-    private String name;
 }

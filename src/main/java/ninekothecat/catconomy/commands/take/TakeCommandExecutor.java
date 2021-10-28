@@ -6,7 +6,6 @@ import ninekothecat.catconomy.enums.TransactionType;
 import ninekothecat.catconomy.interfaces.ICatEconomyCommandExecutor;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -20,26 +19,26 @@ import java.util.UUID;
 public class TakeCommandExecutor implements ICatEconomyCommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if (!(sender instanceof Player)){
+        if (!(sender instanceof Player)) {
             return false;
         }
-        if (args.length == 2){
+        if (args.length == 2) {
             ArrayList<UUID> usersInvolved = new ArrayList<>(Collections.singleton(Objects.requireNonNull(Catconomy.getPlayerFromName(args[0])).getUniqueId()));
             double amount;
             try {
                 amount = Double.parseDouble(args[1]);
-            }catch (NumberFormatException exception){
+            } catch (NumberFormatException exception) {
                 sender.sendMessage(ChatColor.RED + "Not a valid Number");
                 return false;
             }
-            if (Double.isNaN(amount)){
+            if (Double.isNaN(amount)) {
                 return false;
             }
-            if (amount <= 0){
+            if (amount <= 0) {
                 return false;
             }
-            CatTransaction transaction = new CatTransaction(TransactionType.SUBTRACT_CURRENCY,false, amount,((Player) sender).getUniqueId(), usersInvolved);
-            switch (Catconomy.getBalanceHandler().doTransaction(transaction)){
+            CatTransaction transaction = new CatTransaction(TransactionType.SUBTRACT_CURRENCY, false, amount, ((Player) sender).getUniqueId(), usersInvolved);
+            switch (Catconomy.getBalanceHandler().doTransaction(transaction)) {
                 case INSUFFICIENT_AMOUNT_OF_CURRENCY:
                     sender.sendMessage(ChatColor.DARK_RED + "FAILED TRANSACTION DUE TO INSUFFICIENT AMOUNT OF CURRENCY");
                     return false;

@@ -5,7 +5,7 @@ import net.milkbowl.vault.economy.EconomyResponse;
 /**
  * The Transaction result.
  */
-public enum TransactionResult{
+public enum TransactionResult {
     /**
      * Insufficient amount of currency.
      */
@@ -32,7 +32,7 @@ public enum TransactionResult{
      */
     SUCCESS;
 
-    public static EconomyResponse.ResponseType toEconomyResponseType(TransactionResult result){
+    public static EconomyResponse.ResponseType toEconomyResponseType(TransactionResult result) {
         if (result == TransactionResult.SUCCESS) {
             return EconomyResponse.ResponseType.SUCCESS;
         }

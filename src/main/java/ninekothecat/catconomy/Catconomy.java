@@ -1,20 +1,21 @@
 package ninekothecat.catconomy;
 
 import net.milkbowl.vault.economy.Economy;
+import ninekothecat.catconomy.commands.balance.BalanceCommandExecutor;
+import ninekothecat.catconomy.commands.balance.BalanceTabAutocomplete;
 import ninekothecat.catconomy.commands.catconomycommand.CatEconomyCommand;
 import ninekothecat.catconomy.commands.catconomycommand.CatEconomyCommandHandler;
 import ninekothecat.catconomy.commands.catconomycommand.CatEconomyCommandHandlerAutoCompleter;
-import ninekothecat.catconomy.commands.balance.BalanceCommandExecutor;
-import ninekothecat.catconomy.commands.balance.BalanceTabAutocomplete;
 import ninekothecat.catconomy.commands.deposit.DepositCommandExecutor;
 import ninekothecat.catconomy.commands.give.GiveCommandExecutor;
 import ninekothecat.catconomy.commands.take.TakeCommandExecutor;
 import ninekothecat.catconomy.defaultImplementations.CatBalanceHandler;
-import ninekothecat.catconomy.defaultImplementations.database.CatMapDBDatabase;
 import ninekothecat.catconomy.defaultImplementations.CatPermissionGuard;
 import ninekothecat.catconomy.defaultImplementations.CatPrefix;
+import ninekothecat.catconomy.defaultImplementations.database.CatMapDBDatabase;
 import ninekothecat.catconomy.defaultImplementations.database.SQL.CatSQLDatabase;
 import ninekothecat.catconomy.enums.DefaultDatabaseType;
+import ninekothecat.catconomy.eventlisteners.CatBalanceHandlerMaintnanceTask;
 import ninekothecat.catconomy.eventlisteners.CatPlayerJoinHandler;
 import ninekothecat.catconomy.eventlisteners.CatPlayerLeaveHandler;
 import ninekothecat.catconomy.integrations.CatVaultIntegration;
@@ -41,8 +42,8 @@ public final class Catconomy extends JavaPlugin {
     public static IDatabase database;
     public static Logger logger;
     public static ICurrencyPrefix prefix;
+    public static CatEconomyCommandHandler catEconomyCommandHandler = new CatEconomyCommandHandler();
     private static IBalanceHandler balanceHandler = new CatBalanceHandler();
-    public static CatEconomyCommandHandler catEconomyCommandHandler= new CatEconomyCommandHandler();
 
     public static IBalanceHandler getBalanceHandler() {
         return balanceHandler;
@@ -54,6 +55,25 @@ public final class Catconomy extends JavaPlugin {
         }
         Catconomy.balanceHandler = balanceHandler;
     }
+
+    private static void makeCatConomyCommand(String name) {
+        catEconomyCommandHandler.put(name, new CatEconomyCommand(name));
+    }
+
+    @Nullable
+    public static Player getPlayerFromName(String playerName) {
+        Player player = null;
+        for (Player player1 : Bukkit.getServer().getOnlinePlayers())
+            if (player1.getDisplayName().toUpperCase(Locale.ROOT).equals(playerName.toUpperCase(Locale.ROOT)))
+                player = player1;
+        if (player == null) {
+            for (OfflinePlayer player1 : Bukkit.getServer().getOfflinePlayers())
+                if (Objects.requireNonNull(player1.getName()).toUpperCase(Locale.ROOT).equals(playerName.toUpperCase(Locale.ROOT)))
+                    player = player1.getPlayer();
+        }
+        return player;
+    }
+
     @Override
     public void onEnable() {
         // Plugin startup logic
@@ -76,20 +96,18 @@ public final class Catconomy extends JavaPlugin {
         catEconomyCommandHandler.get("give").setExecutor(new GiveCommandExecutor());
         catEconomyCommandHandler.get("take").setExecutor(new TakeCommandExecutor());
         this.getServer().getPluginManager().registerEvents(new CatPlayerJoinHandler(), this);
-        this.getServer().getPluginManager().registerEvents(new CatPlayerLeaveHandler(),this);
-        if (getServer().getPluginManager().getPlugin("Vault") != null){
+        this.getServer().getPluginManager().registerEvents(new CatPlayerLeaveHandler(), this);
+        CatBalanceHandlerMaintnanceTask catBalanceHandlerMaintnanceTask = new CatBalanceHandlerMaintnanceTask();
+        catBalanceHandlerMaintnanceTask.runTaskTimerAsynchronously(this, 0, this.getConfig().getInt("maintain_delay", 360000));
+        if (getServer().getPluginManager().getPlugin("Vault") != null) {
             this.getLogger().info("Found vault plugin! Enabling");
             enableVaultIntegration();
         }
     }
 
-    private static void makeCatConomyCommand(String name) {
-        catEconomyCommandHandler.put(name, new CatEconomyCommand(name));
-    }
-
-    private void enableVaultIntegration(){
+    private void enableVaultIntegration() {
         this.getServer().getServicesManager().register(Economy.class,
-                 new CatVaultIntegration(),
+                new CatVaultIntegration(),
                 this, ServicePriority.High);
         this.getLogger().info("Registered Vault Integration");
     }
@@ -114,7 +132,7 @@ public final class Catconomy extends JavaPlugin {
                             yamlConfiguration.getString("password"),
                             yamlConfiguration.getString("host"),
                             yamlConfiguration.getString("database_name"),
-                            yamlConfiguration.getString("port") );
+                            yamlConfiguration.getString("port"));
                     break;
                 default:
                     throw new IllegalStateException("Unexpected value: "
@@ -135,23 +153,10 @@ public final class Catconomy extends JavaPlugin {
         }
     }
 
-    @Nullable
-    public static Player getPlayerFromName(String playerName) {
-        Player player = null;
-        for (Player player1 : Bukkit.getServer().getOnlinePlayers())
-            if (player1.getDisplayName().toUpperCase(Locale.ROOT).equals(playerName.toUpperCase(Locale.ROOT)))
-                player = player1;
-            if (player == null){
-                for (OfflinePlayer player1 : Bukkit.getServer().getOfflinePlayers())
-                    if (Objects.requireNonNull(player1.getName()).toUpperCase(Locale.ROOT).equals(playerName.toUpperCase(Locale.ROOT)))
-                        player = player1.getPlayer();
-            }
-        return player;
-    }
     private YamlConfiguration loadConfiguration(String file) {
-        File file1 = new File(this.getDataFolder() , file);
-        if (!file1.exists()){
-            this.saveResource(file,false);
+        File file1 = new File(this.getDataFolder(), file);
+        if (!file1.exists()) {
+            this.saveResource(file, false);
         }
         return YamlConfiguration.loadConfiguration(file1);
     }
