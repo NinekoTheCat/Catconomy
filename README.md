@@ -12,5 +12,6 @@ This is purely an Economy plugin, It manages and secures player transactions and
 A: implement the `IDatabase` interface in a class and then set Catconomy.database to an instance of the class.
 please note that it already needs to be set up.
 
-spigot page: https://www.spigotmc.org/resources/catconomy.97210/ 
-curseforge/bukkit page: dev.bukkit.org/projects/catconomy
+spigot page: https://www.spigotmc.org/resources/catconomy.97210/ .
+
+curseforge/bukkit page: https://dev.bukkit.org/projects/catconomy .
