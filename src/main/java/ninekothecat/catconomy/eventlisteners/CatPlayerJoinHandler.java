@@ -16,8 +16,10 @@ public class CatPlayerJoinHandler implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Catconomy.getBalanceHandler().syncPlayerOnJoin(event.getPlayer().getUniqueId());
         if (!Catconomy.getBalanceHandler().userExists(event.getPlayer().getUniqueId())) {
+            double startingAmount = 100d;
             CatTransaction transaction = new CatTransaction(TransactionType.CREATE_USER, true,
-                    100d, null, new ArrayList<>(Collections.singletonList(event.getPlayer().getUniqueId())));
+                    startingAmount, null, new ArrayList<>(Collections.singletonList(event.getPlayer().getUniqueId()))
+                    , String.format("Create account for %s With starting currency = %s", event.getPlayer().getDisplayName(), startingAmount),Catconomy.getProvidingPlugin(Catconomy.class));
             Catconomy.getBalanceHandler().doTransaction(transaction);
         }
     }

@@ -19,10 +19,8 @@ import ninekothecat.catconomy.eventlisteners.CatBalanceHandlerMaintnanceTask;
 import ninekothecat.catconomy.eventlisteners.CatPlayerJoinHandler;
 import ninekothecat.catconomy.eventlisteners.CatPlayerLeaveHandler;
 import ninekothecat.catconomy.integrations.CatVaultIntegration;
-import ninekothecat.catconomy.interfaces.IBalanceHandler;
-import ninekothecat.catconomy.interfaces.ICurrencyPrefix;
-import ninekothecat.catconomy.interfaces.IDatabase;
-import ninekothecat.catconomy.interfaces.IPermissionGuard;
+import ninekothecat.catconomy.interfaces.*;
+import ninekothecat.catconomy.logging.CatLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -43,8 +41,8 @@ public final class Catconomy extends JavaPlugin {
     public static Logger logger;
     public static ICurrencyPrefix prefix;
     public static CatEconomyCommandHandler catEconomyCommandHandler = new CatEconomyCommandHandler();
-    private static IBalanceHandler balanceHandler = new CatBalanceHandler();
-
+    private static IBalanceHandler balanceHandler;
+    public static ICatLogger iCatLogger = new CatLogger();
     public static IBalanceHandler getBalanceHandler() {
         return balanceHandler;
     }
@@ -82,9 +80,9 @@ public final class Catconomy extends JavaPlugin {
         if (!configFile.exists()) {
             this.saveDefaultConfig();
         }
-
         setDatabase();
         setPrefix();
+        balanceHandler = new CatBalanceHandler(this.getConfig().getBoolean("do_logs",true));
         catEconomyCommandHandler = new CatEconomyCommandHandler();
         Objects.requireNonNull(this.getCommand("balance")).setTabCompleter(new BalanceTabAutocomplete());
         Objects.requireNonNull(this.getCommand("balance")).setExecutor(new BalanceCommandExecutor());

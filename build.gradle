@@ -17,10 +17,13 @@ repositories {
 }
 
 dependencies {
-    compileOnly "com.github.MilkBowl:VaultAPI:1.7"
+    // https://mvnrepository.com/artifact/log4j/apache-log4j-extras
+    implementation group: 'log4j', name: 'apache-log4j-extras', version: '1.2.17'
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.14.1'
     implementation group: 'org.mapdb', name: 'mapdb', version: '3.0.8'
     implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.27'
     compileOnly 'org.bukkit:bukkit:1.12-R0.1-SNAPSHOT'
+    compileOnly "com.github.MilkBowl:VaultAPI:1.7"
 }
 
 def targetJavaVersion = 8

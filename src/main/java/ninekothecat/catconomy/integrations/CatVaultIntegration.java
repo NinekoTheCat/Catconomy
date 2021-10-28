@@ -6,8 +6,11 @@ import ninekothecat.catconomy.Catconomy;
 import ninekothecat.catconomy.defaultImplementations.CatTransaction;
 import ninekothecat.catconomy.enums.TransactionResult;
 import ninekothecat.catconomy.enums.TransactionType;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -16,6 +19,9 @@ import java.util.List;
 import java.util.Objects;
 
 public class CatVaultIntegration implements Economy {
+
+    public static final Plugin PLUGIN = Bukkit.getPluginManager().getPlugin("Vault");
+
     @Override
     public boolean isEnabled() {
         return Catconomy.getBalanceHandler() != null;
@@ -123,7 +129,8 @@ public class CatVaultIntegration implements Economy {
                 true,
                 amount,
                 null,
-                new ArrayList<>(Collections.singleton(Objects.requireNonNull(Catconomy.getPlayerFromName(playerName)).getUniqueId())));
+                new ArrayList<>(Collections.singleton(Objects.requireNonNull(Catconomy.getPlayerFromName(playerName)).getUniqueId()))
+                , String.format("Withdrawn %s from %s", amount, playerName),PLUGIN);
         TransactionResult result = Catconomy.getBalanceHandler().doTransaction(transaction);
         return new EconomyResponse(amount, getBalance(playerName), TransactionResult.toEconomyResponseType(result), result.toString());
     }
@@ -134,7 +141,10 @@ public class CatVaultIntegration implements Economy {
                 true,
                 amount,
                 null,
-                new ArrayList<>(Collections.singleton(player.getUniqueId())));
+                new ArrayList<>(Collections.singleton(player.getUniqueId())),
+                String.format("Withdrawn %s from Offline player %s",
+                amount,
+                player.getName()),PLUGIN);
         TransactionResult result = Catconomy.getBalanceHandler().doTransaction(transaction);
         return new EconomyResponse(amount, getBalance(player), TransactionResult.toEconomyResponseType(result), result.toString());
     }
@@ -157,7 +167,9 @@ public class CatVaultIntegration implements Economy {
                 true,
                 amount,
                 null,
-                new ArrayList<>(Collections.singleton(player.getUniqueId())));
+                new ArrayList<>(Collections.singleton(player.getUniqueId())),
+                String.format("Deposited %s to %s", amount, playerName),
+                PLUGIN);
         TransactionResult result = Catconomy.getBalanceHandler().doTransaction(transaction);
         return new EconomyResponse(amount, getBalance(player), TransactionResult.toEconomyResponseType(result), result.toString());
     }
@@ -168,7 +180,10 @@ public class CatVaultIntegration implements Economy {
                 true,
                 amount,
                 null,
-                new ArrayList<>(Collections.singleton(player.getUniqueId())));
+                new ArrayList<>(Collections.singleton(player.getUniqueId())),
+                "Deposited " + amount + " to Offline Player " + player.getName(),
+                PLUGIN
+                );
         TransactionResult result = Catconomy.getBalanceHandler().doTransaction(transaction);
         return new EconomyResponse(amount, getBalance(player), TransactionResult.toEconomyResponseType(result), result.toString());
     }
@@ -251,7 +266,10 @@ public class CatVaultIntegration implements Economy {
                 true,
                 0,
                 null,
-                new ArrayList<>(Collections.singleton(player.getUniqueId())));
+                new ArrayList<>(Collections.singleton(player.getUniqueId())),
+                "Created Account for " + playerName + " With 0 currency",
+                PLUGIN
+        );
         TransactionResult result = Catconomy.getBalanceHandler().doTransaction(transaction);
         return result == TransactionResult.SUCCESS;
     }
@@ -262,7 +280,9 @@ public class CatVaultIntegration implements Economy {
                 true,
                 0,
                 null,
-                new ArrayList<>(Collections.singleton(player.getUniqueId())));
+                new ArrayList<>(Collections.singleton(player.getUniqueId())),
+                "Created Account for Offline player " + player.getName() + " With 0 currency",
+                PLUGIN);
         TransactionResult result = Catconomy.getBalanceHandler().doTransaction(transaction);
         return result == TransactionResult.SUCCESS;
     }

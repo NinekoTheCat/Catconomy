@@ -3,6 +3,7 @@ package ninekothecat.catconomy.commands.deposit;
 import ninekothecat.catconomy.Catconomy;
 import ninekothecat.catconomy.defaultImplementations.CatTransaction;
 import ninekothecat.catconomy.enums.TransactionType;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -11,10 +12,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 public class DepositCommandExecutor implements CommandExecutor {
     @Override
@@ -36,12 +34,14 @@ public class DepositCommandExecutor implements CommandExecutor {
                     ArrayList<UUID> involved = new ArrayList<>(Arrays.asList(
                             Objects.requireNonNull(((Player) sender).getPlayer()).getUniqueId(),
                             player.getUniqueId()));
-
                     CatTransaction catTransaction = new CatTransaction(TransactionType.TRANSFER_CURRENCY,
                             false,
                             amount,
                             ((Player) sender).getUniqueId(),
-                            involved);
+                            involved, String.format("Transferred %s from %s to %s",
+                            amount,
+                            ((Player) sender).getDisplayName(),
+                            player.getDisplayName()),Catconomy.getProvidingPlugin(Catconomy.class));
                     switch (Catconomy.getBalanceHandler().doTransaction(catTransaction)) {
                         case INSUFFICIENT_AMOUNT_OF_CURRENCY:
                             sender.sendMessage(ChatColor.DARK_RED + "FAILED TRANSACTION DUE TO INSUFFICIENT AMOUNT OF CURRENCY");
