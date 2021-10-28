@@ -14,7 +14,7 @@ public interface IDatabase {
      * returns true if the user exists
      *
      * @param user the user
-     * @return userExists
+     * @return userExists boolean
      */
     boolean userExists(UUID user);
 
@@ -25,7 +25,21 @@ public interface IDatabase {
      */
     void removeUser(UUID user);
 
+    /**
+     * Sets user balance.
+     *
+     * @param user    the user
+     * @param balance the balance
+     */
     void setUserBalance(UUID user, double balance);
+
+    /**
+     * Gets user balance.
+     *
+     * @param user the user
+     * @return the user balance
+     */
+    double getUserBalance(UUID user);
 
     /**
      * Sets a batch of users' balance.

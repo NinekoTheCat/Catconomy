@@ -19,6 +19,8 @@ public interface IBalanceHandler {
 
     boolean userExists(UUID user);
 
+    void maintainSelf();
+
     double getBalance(UUID user);
 
     void saveAll();

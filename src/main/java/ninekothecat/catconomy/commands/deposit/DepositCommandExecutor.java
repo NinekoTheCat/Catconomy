@@ -19,20 +19,20 @@ import java.util.UUID;
 public class DepositCommandExecutor implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if (args.length == 2){
+        if (args.length == 2) {
             Player player = Catconomy.getPlayerFromName(args[0]);
-            if (player != null && sender instanceof Player){
+            if (player != null && sender instanceof Player) {
                 double amount;
                 try {
-                     amount = Double.parseDouble(args[1]);
-                }catch (NumberFormatException exception){
+                    amount = Double.parseDouble(args[1]);
+                } catch (NumberFormatException exception) {
                     sender.sendMessage(ChatColor.RED + "Not a valid Number");
                     return false;
                 }
-                if (Double.isNaN(amount)){
+                if (Double.isNaN(amount)) {
                     return false;
                 }
-                if (amount > 0){
+                if (amount > 0) {
                     ArrayList<UUID> involved = new ArrayList<>(Arrays.asList(
                             Objects.requireNonNull(((Player) sender).getPlayer()).getUniqueId(),
                             player.getUniqueId()));
@@ -42,7 +42,7 @@ public class DepositCommandExecutor implements CommandExecutor {
                             amount,
                             ((Player) sender).getUniqueId(),
                             involved);
-                    switch (Catconomy.getBalanceHandler().doTransaction(catTransaction)){
+                    switch (Catconomy.getBalanceHandler().doTransaction(catTransaction)) {
                         case INSUFFICIENT_AMOUNT_OF_CURRENCY:
                             sender.sendMessage(ChatColor.DARK_RED + "FAILED TRANSACTION DUE TO INSUFFICIENT AMOUNT OF CURRENCY");
                             return false;
@@ -63,7 +63,7 @@ public class DepositCommandExecutor implements CommandExecutor {
                             return true;
                     }
                 }
-            }else {
+            } else {
                 return false;
             }
             return true;

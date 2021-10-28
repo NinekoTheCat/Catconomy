@@ -6,13 +6,14 @@ import ninekothecat.catconomy.Catconomy;
 import ninekothecat.catconomy.defaultImplementations.CatTransaction;
 import ninekothecat.catconomy.enums.TransactionResult;
 import ninekothecat.catconomy.enums.TransactionType;
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.Nullable;
 
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 public class CatVaultIntegration implements Economy {
     @Override
@@ -37,7 +38,7 @@ public class CatVaultIntegration implements Economy {
 
     @Override
     public String format(double amount) {
-        return MessageFormat.format("{0}{1}",amount,Catconomy.prefix.getShortPrefix());
+        return MessageFormat.format("{0}{1}", amount, Catconomy.prefix.getShortPrefix());
     }
 
     @Override
@@ -53,11 +54,11 @@ public class CatVaultIntegration implements Economy {
     @Override
     public boolean hasAccount(String playerName) {
         Player player = Catconomy.getPlayerFromName(playerName);
-        if (player != null){
-                return Catconomy.getBalanceHandler().userExists(player.getUniqueId());
-            }else {
-                return  false;
-            }
+        if (player != null) {
+            return Catconomy.getBalanceHandler().userExists(player.getUniqueId());
+        } else {
+            return false;
+        }
 
     }
 
@@ -108,12 +109,12 @@ public class CatVaultIntegration implements Economy {
 
     @Override
     public boolean has(String playerName, String worldName, double amount) {
-        return has(playerName,amount);
+        return has(playerName, amount);
     }
 
     @Override
     public boolean has(OfflinePlayer player, String worldName, double amount) {
-        return has(player,amount);
+        return has(player, amount);
     }
 
     @Override
@@ -124,7 +125,7 @@ public class CatVaultIntegration implements Economy {
                 null,
                 new ArrayList<>(Collections.singleton(Objects.requireNonNull(Catconomy.getPlayerFromName(playerName)).getUniqueId())));
         TransactionResult result = Catconomy.getBalanceHandler().doTransaction(transaction);
-        return new EconomyResponse(amount,getBalance(playerName),TransactionResult.toEconomyResponseType(result),result.toString());
+        return new EconomyResponse(amount, getBalance(playerName), TransactionResult.toEconomyResponseType(result), result.toString());
     }
 
     @Override
@@ -135,17 +136,17 @@ public class CatVaultIntegration implements Economy {
                 null,
                 new ArrayList<>(Collections.singleton(player.getUniqueId())));
         TransactionResult result = Catconomy.getBalanceHandler().doTransaction(transaction);
-        return new EconomyResponse(amount,getBalance(player),TransactionResult.toEconomyResponseType(result),result.toString());
+        return new EconomyResponse(amount, getBalance(player), TransactionResult.toEconomyResponseType(result), result.toString());
     }
 
     @Override
     public EconomyResponse withdrawPlayer(String playerName, String worldName, double amount) {
-        return withdrawPlayer(playerName,amount);
+        return withdrawPlayer(playerName, amount);
     }
 
     @Override
     public EconomyResponse withdrawPlayer(OfflinePlayer player, String worldName, double amount) {
-        return withdrawPlayer(player,amount);
+        return withdrawPlayer(player, amount);
     }
 
     @Override
@@ -158,7 +159,7 @@ public class CatVaultIntegration implements Economy {
                 null,
                 new ArrayList<>(Collections.singleton(player.getUniqueId())));
         TransactionResult result = Catconomy.getBalanceHandler().doTransaction(transaction);
-        return new EconomyResponse(amount,getBalance(player),TransactionResult.toEconomyResponseType(result),result.toString());
+        return new EconomyResponse(amount, getBalance(player), TransactionResult.toEconomyResponseType(result), result.toString());
     }
 
     @Override
@@ -169,7 +170,7 @@ public class CatVaultIntegration implements Economy {
                 null,
                 new ArrayList<>(Collections.singleton(player.getUniqueId())));
         TransactionResult result = Catconomy.getBalanceHandler().doTransaction(transaction);
-        return new EconomyResponse(amount,getBalance(player),TransactionResult.toEconomyResponseType(result),result.toString());
+        return new EconomyResponse(amount, getBalance(player), TransactionResult.toEconomyResponseType(result), result.toString());
     }
 
     @Override
@@ -184,57 +185,57 @@ public class CatVaultIntegration implements Economy {
 
     @Override
     public EconomyResponse createBank(String name, String player) {
-        return new EconomyResponse(0,0, EconomyResponse.ResponseType.NOT_IMPLEMENTED,"BANKS NOT SUPPORTED");
+        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "BANKS NOT SUPPORTED");
     }
 
     @Override
     public EconomyResponse createBank(String name, OfflinePlayer player) {
-        return new EconomyResponse(0,0, EconomyResponse.ResponseType.NOT_IMPLEMENTED,"BANKS NOT SUPPORTED");
+        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "BANKS NOT SUPPORTED");
     }
 
     @Override
     public EconomyResponse deleteBank(String name) {
-        return new EconomyResponse(0,0, EconomyResponse.ResponseType.NOT_IMPLEMENTED,"BANKS NOT SUPPORTED");
+        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "BANKS NOT SUPPORTED");
     }
 
     @Override
     public EconomyResponse bankBalance(String name) {
-        return new EconomyResponse(0,0, EconomyResponse.ResponseType.NOT_IMPLEMENTED,"BANKS NOT SUPPORTED");
+        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "BANKS NOT SUPPORTED");
     }
 
     @Override
     public EconomyResponse bankHas(String name, double amount) {
-        return new EconomyResponse(0,0, EconomyResponse.ResponseType.NOT_IMPLEMENTED,"BANKS NOT SUPPORTED");
+        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "BANKS NOT SUPPORTED");
     }
 
     @Override
     public EconomyResponse bankWithdraw(String name, double amount) {
-        return new EconomyResponse(0,0, EconomyResponse.ResponseType.NOT_IMPLEMENTED,"BANKS NOT SUPPORTED");
+        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "BANKS NOT SUPPORTED");
     }
 
     @Override
     public EconomyResponse bankDeposit(String name, double amount) {
-        return new EconomyResponse(0,0, EconomyResponse.ResponseType.NOT_IMPLEMENTED,"BANKS NOT SUPPORTED");
+        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "BANKS NOT SUPPORTED");
     }
 
     @Override
     public EconomyResponse isBankOwner(String name, String playerName) {
-        return new EconomyResponse(0,0, EconomyResponse.ResponseType.NOT_IMPLEMENTED,"BANKS NOT SUPPORTED");
+        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "BANKS NOT SUPPORTED");
     }
 
     @Override
     public EconomyResponse isBankOwner(String name, OfflinePlayer player) {
-        return new EconomyResponse(0,0, EconomyResponse.ResponseType.NOT_IMPLEMENTED,"BANKS NOT SUPPORTED");
+        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "BANKS NOT SUPPORTED");
     }
 
     @Override
     public EconomyResponse isBankMember(String name, String playerName) {
-        return new EconomyResponse(0,0, EconomyResponse.ResponseType.NOT_IMPLEMENTED,"BANKS NOT SUPPORTED");
+        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "BANKS NOT SUPPORTED");
     }
 
     @Override
     public EconomyResponse isBankMember(String name, OfflinePlayer player) {
-        return new EconomyResponse(0,0, EconomyResponse.ResponseType.NOT_IMPLEMENTED,"BANKS NOT SUPPORTED");
+        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "BANKS NOT SUPPORTED");
     }
 
     @Override
