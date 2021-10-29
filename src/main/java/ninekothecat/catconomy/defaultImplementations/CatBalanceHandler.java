@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 public class CatBalanceHandler implements IBalanceHandler {
     private final HashMap<UUID, IUser> userMoney = new HashMap<>();
     private boolean dirty = false;
-    private boolean doLogs;
+    private final boolean doLogs;
 
     public CatBalanceHandler(boolean doLogs) {
         this.doLogs = doLogs;
@@ -186,6 +186,7 @@ public class CatBalanceHandler implements IBalanceHandler {
         for (IUser user : userMoney.values()) {
             if (user.isDirty()) {
                 Catconomy.database.setUserBalance(user.getUUID(), user.getMoney());
+                user.setDirty(false);
             } else {
                 double userBalance = Catconomy.database.getUserBalance(user.getUUID());
                 if (Double.isInfinite(userBalance) || !Double.isNaN(userBalance)) {
@@ -198,6 +199,7 @@ public class CatBalanceHandler implements IBalanceHandler {
                 }
             }
         }
+        this.dirty = false;
     }
 
 
