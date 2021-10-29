@@ -1,5 +1,10 @@
+#the user used to access the database
 user: 'user'
+#the password for the database
 password: 'password'
-host: 'host'
+#the host of the sql server
+host: 'localhost'
+#the port on witch the database is hosted
 port: '3306'
+#the name of the already created database
 database_name: 'name'

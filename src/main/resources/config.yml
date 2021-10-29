@@ -1,4 +1,7 @@
 #your database of choice
+#the options are
+#MapDBFile
+#SQL
 database: 'MapDBFile'
 # the prefix you'd like your currency to have
 
