@@ -21,6 +21,7 @@ import ninekothecat.catconomy.eventlisteners.CatPlayerLeaveHandler;
 import ninekothecat.catconomy.integrations.CatVaultIntegration;
 import ninekothecat.catconomy.interfaces.*;
 import ninekothecat.catconomy.logging.CatLogger;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -74,6 +75,9 @@ public final class Catconomy extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        //Bstats
+        int pluginID = 13186;
+        Metrics metrics = new Metrics(this,pluginID);
         // Plugin startup logic
         logger = this.getLogger();
         File configFile = new File(getDataFolder(), "config.yml");
