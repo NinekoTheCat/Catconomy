@@ -3,11 +3,21 @@ plugins {
     id 'java'
 }
 
-
+String packagePath = 'ninekothecat.catconomy'
+group(packagePath)
 group = 'ninekothecat'
 version = '0.0.4'
 shadowJar {
-    minimize()
+    dependencies {
+        include dependency('org.bstats:bstats-bukkit')
+        include dependency('org.bstats:bstats-base')
+        include dependency('com.github.MilkBowl:VaultAPI')
+    }
+    dependencies{
+        relocate('org.bstats', packagePath + '.dependencies.bstats')
+    }
+
+    archiveClassifier.set(null)
 }
 repositories {
     mavenCentral()
@@ -21,11 +31,21 @@ repositories {
 dependencies {
     // https://mvnrepository.com/artifact/log4j/apache-log4j-extras
     implementation group: 'log4j', name: 'apache-log4j-extras', version: '1.2.17'
+    implementation 'org.bstats:bstats-bukkit:2.2.1'
+    implementation 'org.bstats:bstats-base:2.2.1'
     implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.14.1'
     implementation group: 'org.mapdb', name: 'mapdb', version: '3.0.8'
     implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.27'
     compileOnly 'org.bukkit:bukkit:1.12-R0.1-SNAPSHOT'
-    compileOnly "com.github.MilkBowl:VaultAPI:1.7"
+    implementation "com.github.MilkBowl:VaultAPI:1.7"
+}
+
+artifacts { // task 'build' runs generates uberjar
+    archives shadowJar
+}
+
+jar {
+    archiveClassifier.set('min')
 }
 
 def targetJavaVersion = 8
@@ -43,7 +63,9 @@ tasks.withType(JavaCompile).configureEach {
         options.release = targetJavaVersion
     }
 }
-
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
 processResources {
     def props = [version: version]
     inputs.properties props
