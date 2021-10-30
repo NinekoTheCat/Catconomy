@@ -9,6 +9,7 @@ group = 'ninekothecat'
 version = '0.0.5-1'
 shadowJar {
     dependencies {
+        include dependency('org.jetbrains.kotlin:kotlin-stdlib')
         include dependency('org.bstats:bstats-bukkit')
         include dependency('org.bstats:bstats-base')
         include dependency('com.github.MilkBowl:VaultAPI')
@@ -36,6 +37,7 @@ dependencies {
     implementation 'org.bstats:bstats-base:2.2.1'
     implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.14.1'
     implementation group: 'org.mapdb', name: 'mapdb', version: '3.0.8'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.4.10"
     implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.27'
     compileOnly 'org.bukkit:bukkit:1.12-R0.1-SNAPSHOT'
     implementation "com.github.MilkBowl:VaultAPI:1.7"
