@@ -7,6 +7,10 @@ import net.milkbowl.vault.economy.EconomyResponse;
  */
 public enum TransactionResult {
     /**
+     * Lack of permissions
+     */
+    LACK_OF_PERMS,
+    /**
      * Insufficient amount of currency.
      */
     INSUFFICIENT_AMOUNT_OF_CURRENCY,
@@ -14,6 +18,9 @@ public enum TransactionResult {
      * User does not exist.
      */
     USER_DOES_NOT_EXIST,
+    /**
+     * User already exists transaction result.
+     */
     USER_ALREADY_EXISTS,
 //    /**
 //     * User is banned.
@@ -32,6 +39,12 @@ public enum TransactionResult {
      */
     SUCCESS;
 
+    /**
+     * To economy response type economy response . response type.
+     *
+     * @param result the result
+     * @return the economy response . response type
+     */
     public static EconomyResponse.ResponseType toEconomyResponseType(TransactionResult result) {
         if (result == TransactionResult.SUCCESS) {
             return EconomyResponse.ResponseType.SUCCESS;

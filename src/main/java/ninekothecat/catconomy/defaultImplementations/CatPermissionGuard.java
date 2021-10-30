@@ -36,27 +36,27 @@ public class CatPermissionGuard implements IPermissionGuard {
         if (fromUser == initiator) {
             return true;
         } else {
-            return isOp(initiator);
+            return isPermitted(initiator,"catconomy.transfer");
         }
     }
 
-    private boolean isOp(UUID initiator) {
-        return Objects.requireNonNull(Bukkit.getServer().getPlayer(initiator)).hasPermission("op");
+    private boolean isPermitted(UUID initiator,String permissionName) {
+        return Objects.requireNonNull(Bukkit.getServer().getPlayer(initiator)).hasPermission(permissionName);
     }
 
     private boolean canSubtractCurrency(UUID user) {
-        return isOp(user);
+        return isPermitted(user,"catconomy.subtract");
     }
 
     private boolean canGiveCurrency(UUID user) {
-        return isOp(user);
+        return isPermitted(user,"catconomy.give");
     }
 
     private boolean canCreateUser(UUID user) {
-        return isOp(user);
+        return isPermitted(user,"catconomy.create.user");
     }
 
     private boolean canDeleteUser(UUID user) {
-        return isOp(user);
+        return isPermitted(user, "catconomy.delete.user");
     }
 }

@@ -22,4 +22,13 @@ public interface ICatLogger {
      * @param result      the result
      */
     void fail(ITransaction transaction, TransactionResult result);
+
+    /**
+     * logs an error transaction
+     *
+     * @param transaction the transaction
+     * @param result      the result
+     * @param exception   the exception
+     */
+    void error(ITransaction transaction,TransactionResult result, Exception exception);
 }

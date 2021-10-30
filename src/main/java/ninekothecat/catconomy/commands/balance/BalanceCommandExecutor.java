@@ -14,6 +14,10 @@ public class BalanceCommandExecutor implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         String shortPrefix = Catconomy.prefix.getShortPrefix();
+        if (!sender.hasPermission("catconomy.balance")){
+            sender.sendMessage(ChatColor.RED + "You are not authorised to do that");
+            return false;
+        }
         switch (args.length) {
             case 0:
                 getSelfMoneyAmount(sender, shortPrefix);
