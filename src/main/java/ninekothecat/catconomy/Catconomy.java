@@ -103,7 +103,7 @@ public final class Catconomy extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new CatPlayerJoinHandler(), this);
         this.getServer().getPluginManager().registerEvents(new CatPlayerLeaveHandler(), this);
         CatBalanceHandlerMaintnanceTask catBalanceHandlerMaintnanceTask = new CatBalanceHandlerMaintnanceTask();
-        catBalanceHandlerMaintnanceTask.runTaskTimerAsynchronously(this, 0, this.getConfig().getInt("maintain_delay", 360000));
+        catBalanceHandlerMaintnanceTask.runTaskTimerAsynchronously(this, 0, this.getConfig().getInt("maintain_delay", 144000));
         if (getServer().getPluginManager().getPlugin("Vault") != null) {
             this.getLogger().info("Found vault plugin! Enabling");
             enableVaultIntegration();
