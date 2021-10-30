@@ -12,6 +12,7 @@ shadowJar {
         include dependency('org.bstats:bstats-bukkit')
         include dependency('org.bstats:bstats-base')
         include dependency('com.github.MilkBowl:VaultAPI')
+        include dependency('org.mapdb:mapdb')
     }
     dependencies{
         relocate('org.bstats', packagePath + '.dependencies.bstats')
