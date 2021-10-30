@@ -1,4 +1,6 @@
 # Catconomy
+[![](https://tokei.rs/b1/github/NinekoTheCat/Catconomy?category=files)](https://github.com/NinekoTheCat/Catconomy) [![](https://tokei.rs/b1/github/NinekoTheCat/Catconomy?category=code)](https://github.com/NinekoTheCat/Catconomy)
+
 a simple and modular economy plugin with database addon support
 
 
@@ -15,3 +17,5 @@ please note that it already needs to be set up.
 spigot page: https://www.spigotmc.org/resources/catconomy.97210/ .
 
 curseforge/bukkit page: https://dev.bukkit.org/projects/catconomy .
+
+https://tokei.rs/b1/{host: values: github}NinekoTheCat/Catconomy
