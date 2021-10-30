@@ -48,6 +48,9 @@ public class GiveCommandExecutor implements ICatEconomyCommandExecutor {
                     String.format("%s Gave %s to %s (%s)", ((Player) sender).getDisplayName(), amount, Arrays.toString(strings.toArray()),Arrays.toString(usersInvolved.toArray())),
                     Catconomy.getProvidingPlugin(Catconomy.class));
             switch (Catconomy.getBalanceHandler().doTransaction(transaction)) {
+                case LACK_OF_PERMS:
+                    sender.sendMessage(ChatColor.DARK_RED + "YOU ARE NOT AUTHORISED TO DO THIS");
+                    return false;
                 case INSUFFICIENT_AMOUNT_OF_CURRENCY:
                     sender.sendMessage(ChatColor.DARK_RED + "FAILED TRANSACTION DUE TO INSUFFICIENT AMOUNT OF CURRENCY");
                     return false;

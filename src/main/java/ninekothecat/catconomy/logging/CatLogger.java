@@ -46,9 +46,23 @@ public class CatLogger implements ICatLogger {
         Marker marker = new MarkerManager.Log4jMarker(
                 String.format("%s V%s", transaction.getPlugin().getName(),
                         transaction.getPlugin().getDescription().getVersion()));
-        logger.error(marker,
+        logger.warn(marker,
                 MessageFormat.format("Transaction with type {0} Failed because {1} with amount {2} initiated by {3} with users {4}",
                 transaction.getTransactionType().toString(), result.toString(), transaction.getAmount(), transaction.getInitiator(),
                 Arrays.toString(transaction.getUsersInvolved().toArray())));
+    }
+    public void error(ITransaction transaction,TransactionResult result, Exception exception){
+        Marker marker = new MarkerManager.Log4jMarker(
+                String.format("%s V%s", transaction.getPlugin().getName(),
+                        transaction.getPlugin().getDescription().getVersion()));
+        logger.error(marker,
+                MessageFormat.format("Transaction with type {0} failed because {1} with amount {2} initiated by {3} with users {4}",
+                        transaction.getTransactionType().toString(),
+                        result.toString(),
+                        transaction.getAmount(),
+                        transaction.getInitiator(),
+                        Arrays.toString(transaction.getUsersInvolved().toArray())
+                        ),exception);
+
     }
 }

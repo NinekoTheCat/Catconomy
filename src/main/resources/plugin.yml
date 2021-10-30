@@ -15,3 +15,33 @@ commands:
   catconomy:
     description: "catconomy commands"
     aliases: [ 'cc' ]
+permissions:
+  catconomy.*:
+    description: give acess to all catconomy commands
+    default: false
+    children:
+      catconomy.subtract: true
+      catconomy.give: true
+      catconomy.balance: true
+      catconomy.transfer: true
+      catconomy.create.user: true
+      catconomy.delete.user: true
+  catconomy.transfer:
+    description: allows users to transfer money between each other
+    default: true
+  catconomy.balance:
+    description: allows users to check their balance
+    default: true
+  catconomy.give:
+    description: allows users to give money from thin air to others
+    default: op
+  catconomy.subtract:
+    description: allows users to subtract aka take money from others
+    default: op
+  catconomy.create.user:
+    description: allows users to create new accounts
+    default: op
+  catconomy.delete.user:
+    description: allows users to delete other accounts
+    default: op
+

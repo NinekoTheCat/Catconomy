@@ -26,6 +26,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
@@ -55,8 +56,10 @@ public final class Catconomy extends JavaPlugin {
         Catconomy.balanceHandler = balanceHandler;
     }
 
-    private static void makeCatConomyCommand(String name) {
-        catEconomyCommandHandler.put(name, new CatEconomyCommand(name));
+    private static void makeCatConomyCommand(String name, Permission permission) {
+        final CatEconomyCommand catEconomyCommand = new CatEconomyCommand(name);
+        catEconomyCommand.setPermission(permission);
+        catEconomyCommandHandler.put(name, catEconomyCommand);
     }
 
     @Nullable
@@ -93,8 +96,8 @@ public final class Catconomy extends JavaPlugin {
         Objects.requireNonNull(this.getCommand("deposit")).setExecutor(new DepositCommandExecutor());
         Objects.requireNonNull(this.getCommand("catconomy")).setExecutor(catEconomyCommandHandler);
         Objects.requireNonNull(this.getCommand("catconomy")).setTabCompleter(new CatEconomyCommandHandlerAutoCompleter());
-        makeCatConomyCommand("give");
-        makeCatConomyCommand("take");
+        makeCatConomyCommand("give",Bukkit.getPluginManager().getPermission("catconomy.give"));
+        makeCatConomyCommand("take", Bukkit.getPluginManager().getPermission("catconomy.subtract"));
         catEconomyCommandHandler.get("give").setExecutor(new GiveCommandExecutor());
         catEconomyCommandHandler.get("take").setExecutor(new TakeCommandExecutor());
         this.getServer().getPluginManager().registerEvents(new CatPlayerJoinHandler(), this);

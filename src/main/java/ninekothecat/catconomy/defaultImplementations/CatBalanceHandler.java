@@ -23,53 +23,65 @@ public class CatBalanceHandler implements IBalanceHandler {
 
     @Override
     public TransactionResult doTransaction(ITransaction transaction) {
-        if (Catconomy.permissionGuard.isPermitted(transaction)) {
-            if (transaction.getInitiator() != null && !userMoney.containsKey(transaction.getInitiator())) {
-                userMoney.put(transaction.getInitiator()
-                        , new CatUser(Catconomy.database.getUserBalance(transaction.getInitiator())
-                                , transaction.getInitiator()));
-            }
-            for (UUID user : transaction.getUsersInvolved()) {
-                if (!userMoney.containsKey(user)) {
-                    userMoney.put(user, new CatUser(Catconomy.database.getUserBalance(user), user));
+        try {
+            if (Catconomy.permissionGuard.isPermitted(transaction)) {
+                if (transaction.getInitiator() != null && !userMoney.containsKey(transaction.getInitiator())) {
+                    userMoney.put(transaction.getInitiator()
+                            , new CatUser(Catconomy.database.getUserBalance(transaction.getInitiator())
+                                    , transaction.getInitiator()));
                 }
-            }
-            Iterator<UUID> uuidIterator = transaction.getUsersInvolved().iterator();
-            UUID firstUser = uuidIterator.next();
-            Double transactionAmount = transaction.getAmount();
-            TransactionResult result;
-            switch (transaction.getTransactionType()) {
-                case DELETE_USER:
-                    result = deleteUser(firstUser);
-                    break;
-                case CREATE_USER:
-                    result = createUser(firstUser, transactionAmount);
-                    break;
-                case TRANSFER_CURRENCY:
-                    result = transferCurrency(firstUser, uuidIterator.next(), transactionAmount);
-                    break;
-                case SUBTRACT_CURRENCY:
-                    result = subtractCurrency(firstUser, transactionAmount);
-                    break;
-                case GIVE_CURRENCY:
-                    result = giveCurrency(firstUser, transactionAmount);
-                    break;
-                default:
-                    result = TransactionResult.ILLEGAL_TRANSACTION;
-                    break;
-            }
-            if (result == TransactionResult.SUCCESS) {
-                dirty = true;
-                if (doLogs){
-                    Catconomy.iCatLogger.success(transaction);
+                for (UUID user : transaction.getUsersInvolved()) {
+                    if (!userMoney.containsKey(user)) {
+                        userMoney.put(user, new CatUser(Catconomy.database.getUserBalance(user), user));
+                    }
                 }
+                TransactionResult result = getTransactionResult(transaction);
+                if (result == TransactionResult.SUCCESS) {
+                    dirty = true;
+                    if (doLogs){
+                        Catconomy.iCatLogger.success(transaction);
+                    }
 
-            }else if (doLogs){
-                Catconomy.iCatLogger.fail(transaction,result);
+                }else if (doLogs){
+                    Catconomy.iCatLogger.fail(transaction,result);
+                }
+                return result;
+            }else {
+                Catconomy.iCatLogger.fail(transaction,TransactionResult.LACK_OF_PERMS);
+                return TransactionResult.LACK_OF_PERMS;
             }
-            return result;
+        }catch (Exception e){
+            Catconomy.iCatLogger.error(transaction,TransactionResult.INTERNAL_ERROR,e);
+            return TransactionResult.INTERNAL_ERROR;
         }
-        return TransactionResult.ILLEGAL_TRANSACTION;
+    }
+
+    private TransactionResult getTransactionResult(ITransaction transaction) {
+        Iterator<UUID> uuidIterator = transaction.getUsersInvolved().iterator();
+        UUID firstUser = uuidIterator.next();
+        Double transactionAmount = transaction.getAmount();
+        TransactionResult result;
+        switch (transaction.getTransactionType()) {
+            case DELETE_USER:
+                result = deleteUser(firstUser);
+                break;
+            case CREATE_USER:
+                result = createUser(firstUser, transactionAmount);
+                break;
+            case TRANSFER_CURRENCY:
+                result = transferCurrency(firstUser, uuidIterator.next(), transactionAmount);
+                break;
+            case SUBTRACT_CURRENCY:
+                result = subtractCurrency(firstUser, transactionAmount);
+                break;
+            case GIVE_CURRENCY:
+                result = giveCurrency(firstUser, transactionAmount);
+                break;
+            default:
+                result = TransactionResult.ILLEGAL_TRANSACTION;
+                break;
+        }
+        return result;
     }
 
     private TransactionResult transferCurrency(UUID fromUser, UUID toUser, double amount) {

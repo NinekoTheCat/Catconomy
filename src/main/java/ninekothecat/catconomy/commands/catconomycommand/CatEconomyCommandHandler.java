@@ -1,5 +1,6 @@
 package ninekothecat.catconomy.commands.catconomycommand;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -28,11 +29,19 @@ public class CatEconomyCommandHandler implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (args.length > 0) {
+
             if (commands.containsKey(args[0]) && commands.get(args[0]).hasExecutor()) {
+                final CatEconomyCommand catEconomyCommand = commands.get(args[0]);
                 List<String> arg2 = new ArrayList<>(Arrays.asList(args));
                 arg2.remove(0);
                 String[] args3 = arg2.toArray(new String[args.length - 1]);
-                return commands.get(args[0]).getExecutor().onCommand(sender, command, label, args3);
+                if (sender.hasPermission(catEconomyCommand.getPermission())){
+                    return catEconomyCommand.getExecutor().onCommand(sender, command, label, args3);
+                }else {
+                    sender.sendMessage(ChatColor.RED + "you can't do that");
+                    return false;
+                }
+
             }
         }
         return false;
