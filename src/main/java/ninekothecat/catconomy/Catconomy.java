@@ -45,6 +45,15 @@ public final class Catconomy extends JavaPlugin {
     public static CatEconomyCommandHandler catEconomyCommandHandler = new CatEconomyCommandHandler();
     private static IBalanceHandler balanceHandler;
     public static ICatLogger iCatLogger = new CatLogger();
+
+    @Override
+    public void onLoad() {
+        if (getServer().getPluginManager().getPlugin("Vault") != null) {
+            this.getLogger().info("Found vault plugin! Enabling");
+            enableVaultIntegration();
+        }
+    }
+
     public static IBalanceHandler getBalanceHandler() {
         return balanceHandler;
     }
@@ -104,10 +113,6 @@ public final class Catconomy extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new CatPlayerLeaveHandler(), this);
         CatBalanceHandlerMaintnanceTask catBalanceHandlerMaintnanceTask = new CatBalanceHandlerMaintnanceTask();
         catBalanceHandlerMaintnanceTask.runTaskTimerAsynchronously(this, 0, this.getConfig().getInt("maintain_delay", 144000));
-        if (getServer().getPluginManager().getPlugin("Vault") != null) {
-            this.getLogger().info("Found vault plugin! Enabling");
-            enableVaultIntegration();
-        }
     }
 
     private void enableVaultIntegration() {
