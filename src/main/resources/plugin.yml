@@ -8,6 +8,7 @@ description: an economy plugin that does not care about the database you use
 commands:
   balance:
     description: "get your or another player's balance"
+    aliases: [ 'bal' ]
   deposit:
     description: "transfer money to another player"
     aliases: [ 'pay' ]
