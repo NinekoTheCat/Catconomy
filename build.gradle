@@ -6,7 +6,7 @@ plugins {
 String packagePath = 'ninekothecat.catconomy'
 group(packagePath)
 group = 'ninekothecat'
-version = '0.0.5-1'
+version = '0.0.6'
 shadowJar {
     dependencies {
         include dependency('org.jetbrains.kotlin:kotlin-stdlib')
