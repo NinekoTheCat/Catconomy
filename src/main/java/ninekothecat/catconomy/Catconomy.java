@@ -26,6 +26,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.ServicePriority;
+import org.bukkit.plugin.ServicesManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,13 +37,13 @@ import java.util.Objects;
 import java.util.logging.Logger;
 
 public final class Catconomy extends JavaPlugin {
-    public static final IPermissionGuard permissionGuard = new CatPermissionGuard();
+    public static IPermissionGuard permissionGuard;
     public static IDatabase database;
     public static Logger logger;
     public static ICurrencyPrefix prefix;
-    public static CatEconomyCommandHandler catEconomyCommandHandler = new CatEconomyCommandHandler();
-    private static IBalanceHandler balanceHandler;
-    public static ICatLogger iCatLogger = new CatLogger();
+    public static CatEconomyCommandHandler catEconomyCommandHandler;
+    static IBalanceHandler balanceHandler;
+    public static ICatLogger iCatLogger;
 
     @Override
     public void onLoad() {
@@ -50,6 +51,14 @@ public final class Catconomy extends JavaPlugin {
             this.getLogger().info("Found vault plugin! Enabling");
             enableVaultIntegration();
         }
+        setDatabase();
+        setPrefix();
+        final ServicesManager servicesManager = this.getServer().getServicesManager();
+        servicesManager.register(IBalanceHandler.class,new CatBalanceHandler(this.getConfig().getBoolean("do_logs",true)),this,ServicePriority.Low );
+        servicesManager.register(IPermissionGuard.class,new CatPermissionGuard(),this,ServicePriority.Low);
+        servicesManager.register(ICatLogger.class, new CatLogger(),this,ServicePriority.Low);
+
+
     }
 
     public static IBalanceHandler getBalanceHandler() {
@@ -91,22 +100,64 @@ public final class Catconomy extends JavaPlugin {
         if (!configFile.exists()) {
             this.saveDefaultConfig();
         }
-        setDatabase();
-        setPrefix();
-        balanceHandler = new CatBalanceHandler(this.getConfig().getBoolean("do_logs",true));
+
+        logger.info("Loading services...");
+        if (loadServices()) return;
+
         catEconomyCommandHandler = new CatEconomyCommandHandler();
         final CatPlayerJoinHandler catPlayerJoinHandler = new CatPlayerJoinHandler(this.getConfig().getDouble("starting_amount", 1000));
-        Objects.requireNonNull(this.getCommand("balance")).setTabCompleter(new BalanceTabAutocomplete());
-        Objects.requireNonNull(this.getCommand("balance")).setExecutor(new BalanceCommandExecutor());
-        Objects.requireNonNull(this.getCommand("deposit")).setExecutor(new DepositCommandExecutor());
-        Objects.requireNonNull(this.getCommand("catconomy")).setExecutor(catEconomyCommandHandler);
-        Objects.requireNonNull(this.getCommand("catconomy")).setTabCompleter(new CatEconomyCommandHandlerAutoCompleter());
+        registerBukkitCommands();
         makeCatConomyCommand("give",Bukkit.getPluginManager().getPermission("catconomy.give"));
         makeCatConomyCommand("take", Bukkit.getPluginManager().getPermission("catconomy.subtract"));
         catEconomyCommandHandler.get("give").setExecutor(new GiveCommandExecutor());
         catEconomyCommandHandler.get("take").setExecutor(new TakeCommandExecutor());
 
         this.getServer().getPluginManager().registerEvents(catPlayerJoinHandler, this);
+    }
+
+    private void registerBukkitCommands() {
+        Objects.requireNonNull(this.getCommand("balance")).setTabCompleter(new BalanceTabAutocomplete());
+        Objects.requireNonNull(this.getCommand("balance")).setExecutor(new BalanceCommandExecutor());
+        Objects.requireNonNull(this.getCommand("deposit")).setExecutor(new DepositCommandExecutor());
+        Objects.requireNonNull(this.getCommand("catconomy")).setExecutor(catEconomyCommandHandler);
+        Objects.requireNonNull(this.getCommand("catconomy")).setTabCompleter(new CatEconomyCommandHandlerAutoCompleter());
+    }
+
+    private boolean loadServices() {
+        final ServicesManager servicesManager = this.getServer().getServicesManager();
+
+        balanceHandler = servicesManager.load(IBalanceHandler.class);
+        if (balanceHandler == null){
+            logger.severe("Balance handler couldn't be loaded");
+            this.getServer().getPluginManager().disablePlugin(this);
+            return true;
+        }
+        iCatLogger = servicesManager.load(ICatLogger.class);
+        if (iCatLogger == null){
+            logger.severe("Logger could not be loaded");
+            this.getServer().getPluginManager().disablePlugin(this);
+            return true;
+        }
+        permissionGuard = servicesManager.load(IPermissionGuard.class);
+        if (permissionGuard == null){
+            logger.severe("permission guard could not be loaded");
+            this.getServer().getPluginManager().disablePlugin(this);
+            return true;
+        }
+        database = servicesManager.load(IDatabase.class);
+        if (database == null){
+            logger.severe("database could not be loaded");
+            this.getServer().getPluginManager().disablePlugin(this);
+            return true;
+        }
+        prefix = servicesManager.load(ICurrencyPrefix.class);
+        if (prefix == null){
+            logger.severe("prefix could not be loaded");
+            this.getServer().getPluginManager().disablePlugin(this);
+            return true;
+        }
+        logger.info("Loaded all services!");
+        return false;
     }
 
     private void enableVaultIntegration() {
@@ -117,10 +168,12 @@ public final class Catconomy extends JavaPlugin {
     }
 
     private void setPrefix() {
+        final ServicesManager servicesManager = this.getServer().getServicesManager();
+
         if (this.getConfig().contains("Sprefix") && this.getConfig().contains("Lprefix")) {
-            prefix = new CatPrefix(this.getConfig().getString("Sprefix"), this.getConfig().getString("Lprefix"));
+            servicesManager.register(ICurrencyPrefix.class,new CatPrefix(this.getConfig().getString("Sprefix"), this.getConfig().getString("Lprefix"))  ,this, ServicePriority.Low);
         } else {
-            prefix = new CatPrefix(this.getConfig().getString("Sprefix"));
+            servicesManager.register(ICurrencyPrefix.class, new CatPrefix(this.getConfig().getString("Sprefix")),this,ServicePriority.Low);
         }
     }
 
@@ -128,25 +181,19 @@ public final class Catconomy extends JavaPlugin {
         try {
             switch (DefaultDatabaseType.valueOf(this.getConfig().getString("database"))) {
                 case MapDBFile:
-                    database = new CatMapDBDatabase();
+                    this.getServer().getServicesManager().register(IDatabase.class,new CatMapDBDatabase(),this,ServicePriority.Low);
                     break;
                 case SQL:
                     YamlConfiguration yamlConfiguration = loadConfiguration("Sql.yml");
-                    database = new CatSQLDatabase(yamlConfiguration.getString("user"),
+                    final CatSQLDatabase catSQLDatabase = new CatSQLDatabase(yamlConfiguration.getString("user"),
                             yamlConfiguration.getString("password"),
                             yamlConfiguration.getString("host"),
                             yamlConfiguration.getString("database_name"),
                             yamlConfiguration.getString("port"));
+                    this.getServer().getServicesManager().register(IDatabase.class, catSQLDatabase,this,ServicePriority.Low);
                     break;
-                default:
-                    throw new IllegalStateException("Unexpected value: "
-                            + DefaultDatabaseType.valueOf(this.getConfig().getString("database")));
             }
-        } catch (IllegalArgumentException | SQLException exception) {
-            database = null;
-            exception.printStackTrace();
-            this.getServer().getPluginManager().disablePlugin(this);
-        }
+        } catch (IllegalArgumentException | SQLException ignored) {}
     }
     private YamlConfiguration loadConfiguration(String file) {
         File file1 = new File(this.getDataFolder(), file);
