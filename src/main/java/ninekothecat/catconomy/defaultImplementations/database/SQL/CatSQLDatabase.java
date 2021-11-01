@@ -43,7 +43,7 @@ public class CatSQLDatabase implements IDatabase {
 
     @Override
     public boolean userExists(UUID user) {
-        String query = "SELECT * FROM ACCOUNTS WHERE UUID = ?";
+        String query = "SELECT CURRENCY FROM ACCOUNTS WHERE UUID = ?";
         try (PreparedStatement statement = conn.prepareStatement(query)) {
             statement.setString(1, user.toString());
             try (ResultSet resultSet = statement.executeQuery()) {
