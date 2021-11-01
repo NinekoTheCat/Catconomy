@@ -17,5 +17,3 @@ please note that it already needs to be set up.
 spigot page: https://www.spigotmc.org/resources/catconomy.97210/ .
 
 curseforge/bukkit page: https://dev.bukkit.org/projects/catconomy .
-
-https://tokei.rs/b1/{host: values: github}NinekoTheCat/Catconomy

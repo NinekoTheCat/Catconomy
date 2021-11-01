@@ -4,47 +4,27 @@ import ninekothecat.catconomy.Catconomy;
 import ninekothecat.catconomy.enums.TransactionResult;
 import ninekothecat.catconomy.interfaces.IBalanceHandler;
 import ninekothecat.catconomy.interfaces.ITransaction;
-import ninekothecat.catconomy.interfaces.IUser;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public class CatBalanceHandler implements IBalanceHandler {
-    private final HashMap<UUID, IUser> userMoney = new HashMap<>();
-    private boolean dirty = false;
     private final boolean doLogs;
-
+    private final ThreadPoolExecutor threadPoolExecutor;
     public CatBalanceHandler(boolean doLogs) {
         this.doLogs = doLogs;
+        threadPoolExecutor = (ThreadPoolExecutor) Executors.newCachedThreadPool();
     }
 
     @Override
     public TransactionResult doTransaction(ITransaction transaction) {
         try {
             if (Catconomy.permissionGuard.isPermitted(transaction)) {
-                if (transaction.getInitiator() != null && !userMoney.containsKey(transaction.getInitiator())) {
-                    userMoney.put(transaction.getInitiator()
-                            , new CatUser(Catconomy.database.getUserBalance(transaction.getInitiator())
-                                    , transaction.getInitiator()));
-                }
-                for (UUID user : transaction.getUsersInvolved()) {
-                    if (!userMoney.containsKey(user)) {
-                        userMoney.put(user, new CatUser(Catconomy.database.getUserBalance(user), user));
-                    }
-                }
-                TransactionResult result = getTransactionResult(transaction);
-                if (result == TransactionResult.SUCCESS) {
-                    dirty = true;
-                    if (doLogs){
-                        Catconomy.iCatLogger.success(transaction);
-                    }
-
-                }else if (doLogs){
-                    Catconomy.iCatLogger.fail(transaction,result);
-                }
+                Future<TransactionResult> resultFuture = threadPoolExecutor.submit(() -> getTransactionResult(transaction));
+                TransactionResult result = resultFuture.get();
+                logTransaction(transaction, result);
                 return result;
             }else {
                 Catconomy.iCatLogger.fail(transaction,TransactionResult.LACK_OF_PERMS);
@@ -56,7 +36,28 @@ public class CatBalanceHandler implements IBalanceHandler {
         }
     }
 
-    private TransactionResult getTransactionResult(ITransaction transaction) {
+    @Override
+    public boolean userExists(UUID user) {
+        return userExistsStatic(user);
+    }
+
+    @Override
+    public double getBalance(UUID user) {
+        return getBalanceStatic(user);
+    }
+
+
+    private void logTransaction(ITransaction transaction, TransactionResult result) {
+        if (doLogs){
+            if (result == TransactionResult.SUCCESS) {
+                    Catconomy.iCatLogger.success(transaction);
+            }else {
+                Catconomy.iCatLogger.fail(transaction, result);
+            }
+        }
+    }
+
+    private static TransactionResult getTransactionResult(ITransaction transaction) {
         Iterator<UUID> uuidIterator = transaction.getUsersInvolved().iterator();
         UUID firstUser = uuidIterator.next();
         Double transactionAmount = transaction.getAmount();
@@ -84,151 +85,70 @@ public class CatBalanceHandler implements IBalanceHandler {
         return result;
     }
 
-    private TransactionResult transferCurrency(UUID fromUser, UUID toUser, double amount) {
+    private static TransactionResult transferCurrency(UUID fromUser, UUID toUser, double amount) {
         if (amount <= 0) {
             return TransactionResult.ILLEGAL_TRANSACTION;
         }
         if (fromUser == toUser) {
             return TransactionResult.ILLEGAL_TRANSACTION;
         }
-        if (!userExists(fromUser) || !userExists(toUser)) {
+        if (!userExistsStatic(fromUser) || !userExistsStatic(toUser)) {
             return TransactionResult.USER_DOES_NOT_EXIST;
         }
-        IUser fromIUser = this.userMoney.get(fromUser);
-        double fromUserMoney = fromIUser.getMoney();
-        IUser toIUser = this.userMoney.get(toUser);
-        double toUserMoney = toIUser.getMoney();
-        if (fromUserMoney - amount < 0) {
-            return TransactionResult.INSUFFICIENT_AMOUNT_OF_CURRENCY;
-        }
-        fromUserMoney -= amount;
-        toUserMoney += amount;
-        fromIUser.setMoney(fromUserMoney);
-        toIUser.setMoney(toUserMoney);
+        double fromUserMoney = getBalanceStatic(fromUser);
+
         return TransactionResult.SUCCESS;
 
     }
 
-    private TransactionResult deleteUser(UUID user) {
-        if (!userExists(user)) {
+    private static TransactionResult deleteUser(UUID user) {
+        if (!userExistsStatic(user)) {
             return TransactionResult.USER_DOES_NOT_EXIST;
         }
         Catconomy.database.removeUser(user);
-        this.userMoney.remove(user);
         return TransactionResult.SUCCESS;
     }
 
-    private TransactionResult createUser(UUID user, double amount) {
-        if (userExists(user)) {
+    private static TransactionResult createUser(UUID user, double amount) {
+        if (userExistsStatic(user)) {
             return TransactionResult.USER_ALREADY_EXISTS;
         }
         Catconomy.database.setUserBalance(user, amount);
-        syncPlayerOnJoin(user);
         return TransactionResult.SUCCESS;
     }
 
-    private TransactionResult giveCurrency(UUID toUser, double amount) {
-        if (!userExists(toUser)) {
+    private static TransactionResult giveCurrency(UUID toUser, double amount) {
+        if (!userExistsStatic(toUser)){
             return TransactionResult.USER_DOES_NOT_EXIST;
         }
-
-        if (!Double.isNaN(amount) && Double.isFinite(amount)) {
-            IUser user = userMoney.get(toUser);
-            double money = user.getMoney();
-            if (amount < 1) {
-                return TransactionResult.INSUFFICIENT_AMOUNT_OF_CURRENCY;
-            }
-            user.setMoney(money + amount);
-            userMoney.put(toUser, user);
-            return TransactionResult.SUCCESS;
-        } else {
+        if (amount <= 0){
             return TransactionResult.ILLEGAL_TRANSACTION;
         }
+        double userMoney = getBalanceStatic(toUser) + amount;
+        Catconomy.database.setUserBalance(toUser,userMoney);
+        return TransactionResult.SUCCESS;
     }
 
-    private TransactionResult subtractCurrency(UUID fromUser, double amount) {
+    private static TransactionResult subtractCurrency(UUID fromUser, double amount) {
         if (amount <= 0) {
             return TransactionResult.ILLEGAL_TRANSACTION;
         }
-        if (!userExists(fromUser)) {
+        if (!userExistsStatic(fromUser)) {
             return TransactionResult.USER_DOES_NOT_EXIST;
         }
-        IUser fromIUser = userMoney.get(fromUser);
-        double newAmount = fromIUser.getMoney() - amount;
-        if (newAmount < 0) {
+        double userBalance = getBalanceStatic(fromUser);
+        if (userBalance -amount <0){
             return TransactionResult.INSUFFICIENT_AMOUNT_OF_CURRENCY;
         }
-        fromIUser.setMoney(newAmount);
+        Catconomy.database.setUserBalance(fromUser,userBalance - amount);
         return TransactionResult.SUCCESS;
     }
 
-    @Override
-    public boolean userExists(UUID user) {
-        if (this.userMoney.containsKey(user)) {
-            return true;
-        } else {
-            return Catconomy.database.userExists(user);
-        }
+    public static boolean userExistsStatic(UUID user) {
+        return Catconomy.database.userExists(user);
     }
 
-    @Override
-    public void maintainSelf() {
-        saveAll();
-        Collection<? extends Player> players = Bukkit.getServer().getOnlinePlayers();
-        Set<UUID> uuidSet = players.stream().map(Entity::getUniqueId).collect(Collectors.toSet());
-        this.userMoney.values().stream().filter(user -> !uuidSet.contains(user.getUUID())).forEach(user -> this.userMoney.remove(user.getUUID()));
-    }
-
-    @Override
-    public double getBalance(UUID user) {
-        if (this.userMoney.containsKey(user)) {
-            return this.userMoney.get(user).getMoney();
-        } else {
-            double money = Catconomy.database.getUserBalance(user);
-            this.userMoney.put(user, new CatUser(money, user));
-            return money;
-        }
-    }
-
-    @Override
-    public void saveAll() {
-        if (!this.dirty) {
-            return;
-        }
-        for (IUser user : userMoney.values()) {
-            if (user.isDirty()) {
-                Catconomy.database.setUserBalance(user.getUUID(), user.getMoney());
-                user.setDirty(false);
-            } else {
-                double userBalance = Catconomy.database.getUserBalance(user.getUUID());
-                if (Double.isInfinite(userBalance) || !Double.isNaN(userBalance)) {
-                    user.setMoney(0);
-                    continue;
-                }
-                if (userBalance != user.getMoney()) {
-                    user.setMoney(userBalance);
-                    user.setDirty(false);
-                }
-            }
-        }
-        this.dirty = false;
-    }
-
-
-    @Override
-    public void syncPlayerOnJoin(UUID user) {
-        double userBalance = Catconomy.database.getUserBalance(user);
-        userMoney.put(user, new CatUser(userBalance, user));
-    }
-
-    @Override
-    public void syncPlayerOnLeave(UUID user) {
-        IUser userData = userMoney.get(user);
-
-        if (userData.isDirty()) {
-            Catconomy.database.setUserBalance(user, userData.getMoney());
-        }
-        userMoney.remove(user);
-
+    public static double getBalanceStatic(UUID user) {
+        return Catconomy.database.getUserBalance(user);
     }
 }
