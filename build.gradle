@@ -8,17 +8,10 @@ group(packagePath)
 group = 'ninekothecat'
 version = '0.0.6'
 shadowJar {
-    dependencies {
-        include dependency('org.jetbrains.kotlin:kotlin-stdlib')
-        include dependency('org.bstats:bstats-bukkit')
-        include dependency('org.bstats:bstats-base')
-        include dependency('com.github.MilkBowl:VaultAPI')
-        include dependency('org.mapdb:mapdb')
-    }
     dependencies{
         relocate('org.bstats', packagePath + '.dependencies.bstats')
     }
-
+//    minimize()
     archiveClassifier.set(null)
 }
 repositories {
@@ -37,10 +30,11 @@ dependencies {
     implementation 'org.bstats:bstats-base:2.2.1'
     implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.14.1'
     implementation group: 'org.mapdb', name: 'mapdb', version: '3.0.8'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.4.10"
+    implementation group: 'org.lz4', name: 'lz4-java', version: '1.8.0'
     implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.27'
     compileOnly 'org.bukkit:bukkit:1.12-R0.1-SNAPSHOT'
-    implementation "com.github.MilkBowl:VaultAPI:1.7"
+    compileOnly "com.github.MilkBowl:VaultAPI:1.7"
+
 }
 
 artifacts { // task 'build' runs generates uberjar

@@ -17,15 +17,8 @@ public interface IBalanceHandler {
     @SuppressWarnings("UnusedReturnValue")
     TransactionResult doTransaction(ITransaction transaction);
 
-    boolean userExists(UUID user);
+     boolean userExists(UUID user);
 
-    void maintainSelf();
+     double getBalance(UUID user);
 
-    double getBalance(UUID user);
-
-    void saveAll();
-
-    void syncPlayerOnJoin(UUID user);
-
-    void syncPlayerOnLeave(UUID user);
 }

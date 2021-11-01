@@ -11,16 +11,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class CatPlayerJoinHandler implements Listener {
+    double amount;
+
+    public CatPlayerJoinHandler(double amount) {
+        this.amount = amount;
+    }
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerJoin(PlayerJoinEvent event) {
-        Catconomy.getBalanceHandler().syncPlayerOnJoin(event.getPlayer().getUniqueId());
-        if (!Catconomy.getBalanceHandler().userExists(event.getPlayer().getUniqueId())) {
-            double startingAmount = 100d;
+        if (!Catconomy.getBalanceHandler().userExists(event.getPlayer().getUniqueId()) && amount != 0) {
             CatTransaction transaction = new CatTransaction(TransactionType.CREATE_USER, true,
-                    startingAmount, null, new ArrayList<>(Collections.singletonList(event.getPlayer().getUniqueId()))
-                    , String.format("Create account for %s With starting currency = %s", event.getPlayer().getDisplayName(), startingAmount),Catconomy.getProvidingPlugin(Catconomy.class));
+                    amount, null, new ArrayList<>(Collections.singletonList(event.getPlayer().getUniqueId()))
+                    , String.format("Create account for %s With starting currency = %s", event.getPlayer().getDisplayName(), amount),Catconomy.getProvidingPlugin(Catconomy.class));
             Catconomy.getBalanceHandler().doTransaction(transaction);
         }
     }
+
 }

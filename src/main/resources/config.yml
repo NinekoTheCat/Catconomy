@@ -10,8 +10,8 @@ Lprefix: 'CatCoins'
 #The short version of the prefix
 Sprefix: 'CC'
 
-# if you want to change how often the plugin maintains its internal database sync then uncomment this
-# maintain_delay: 144000
-
 # if you want to disable transaction logging set this to false
 # do_logs: true
+
+# if you want to change how much a player gets when they join the game set to 0 to disable
+# starting_amount: 1000

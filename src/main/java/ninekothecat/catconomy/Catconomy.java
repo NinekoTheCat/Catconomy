@@ -15,9 +15,7 @@ import ninekothecat.catconomy.defaultImplementations.CatPrefix;
 import ninekothecat.catconomy.defaultImplementations.database.CatMapDBDatabase;
 import ninekothecat.catconomy.defaultImplementations.database.SQL.CatSQLDatabase;
 import ninekothecat.catconomy.enums.DefaultDatabaseType;
-import ninekothecat.catconomy.eventlisteners.CatBalanceHandlerMaintnanceTask;
 import ninekothecat.catconomy.eventlisteners.CatPlayerJoinHandler;
-import ninekothecat.catconomy.eventlisteners.CatPlayerLeaveHandler;
 import ninekothecat.catconomy.integrations.CatVaultIntegration;
 import ninekothecat.catconomy.interfaces.*;
 import ninekothecat.catconomy.logging.CatLogger;
@@ -59,9 +57,6 @@ public final class Catconomy extends JavaPlugin {
     }
 
     public static void setBalanceHandler(IBalanceHandler balanceHandler) {
-        if (balanceHandler != null) {
-            Catconomy.balanceHandler.saveAll();
-        }
         Catconomy.balanceHandler = balanceHandler;
     }
 
@@ -100,6 +95,7 @@ public final class Catconomy extends JavaPlugin {
         setPrefix();
         balanceHandler = new CatBalanceHandler(this.getConfig().getBoolean("do_logs",true));
         catEconomyCommandHandler = new CatEconomyCommandHandler();
+        final CatPlayerJoinHandler catPlayerJoinHandler = new CatPlayerJoinHandler(this.getConfig().getDouble("starting_amount", 1000));
         Objects.requireNonNull(this.getCommand("balance")).setTabCompleter(new BalanceTabAutocomplete());
         Objects.requireNonNull(this.getCommand("balance")).setExecutor(new BalanceCommandExecutor());
         Objects.requireNonNull(this.getCommand("deposit")).setExecutor(new DepositCommandExecutor());
@@ -109,10 +105,8 @@ public final class Catconomy extends JavaPlugin {
         makeCatConomyCommand("take", Bukkit.getPluginManager().getPermission("catconomy.subtract"));
         catEconomyCommandHandler.get("give").setExecutor(new GiveCommandExecutor());
         catEconomyCommandHandler.get("take").setExecutor(new TakeCommandExecutor());
-        this.getServer().getPluginManager().registerEvents(new CatPlayerJoinHandler(), this);
-        this.getServer().getPluginManager().registerEvents(new CatPlayerLeaveHandler(), this);
-        CatBalanceHandlerMaintnanceTask catBalanceHandlerMaintnanceTask = new CatBalanceHandlerMaintnanceTask();
-        catBalanceHandlerMaintnanceTask.runTaskTimerAsynchronously(this, 0, this.getConfig().getInt("maintain_delay", 144000));
+
+        this.getServer().getPluginManager().registerEvents(catPlayerJoinHandler, this);
     }
 
     private void enableVaultIntegration() {
@@ -154,15 +148,6 @@ public final class Catconomy extends JavaPlugin {
             this.getServer().getPluginManager().disablePlugin(this);
         }
     }
-
-    @Override
-    public void onDisable() {
-        // Plugin shutdown logic
-        if (balanceHandler != null) {
-            balanceHandler.saveAll();
-        }
-    }
-
     private YamlConfiguration loadConfiguration(String file) {
         File file1 = new File(this.getDataFolder(), file);
         if (!file1.exists()) {
