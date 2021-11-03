@@ -1,7 +1,7 @@
 package ninekothecat.catconomy.defaultImplementations;
 
-import ninekothecat.catconomy.enums.TransactionType;
-import ninekothecat.catconomy.interfaces.ITransaction;
+import ninekothecat.catplugincore.money.enums.TransactionType;
+import ninekothecat.catplugincore.money.interfaces.ITransaction;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ public class CatTransaction implements ITransaction {
     private final Plugin plugin;
     private final String message;
 
-    public CatTransaction(TransactionType transactionType, boolean isConsole, double amount, UUID initiator, ArrayList<UUID> usersInvolved,  String message,Plugin plugin) {
+    public CatTransaction(TransactionType transactionType, boolean isConsole, double amount, UUID initiator, ArrayList<UUID> usersInvolved, String message, Plugin plugin) {
         this.transactionType = transactionType;
         this.isConsole = isConsole;
         this.amount = amount;

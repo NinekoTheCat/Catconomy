@@ -1,11 +1,12 @@
 package ninekothecat.catconomy.defaultImplementations;
 
 import ninekothecat.catconomy.Catconomy;
-import ninekothecat.catconomy.enums.TransactionResult;
-import ninekothecat.catconomy.interfaces.IBalanceHandler;
-import ninekothecat.catconomy.interfaces.ITransaction;
+import ninekothecat.catplugincore.money.enums.TransactionResult;
+import ninekothecat.catplugincore.money.interfaces.IBalanceHandler;
+import ninekothecat.catplugincore.money.interfaces.ITransaction;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;

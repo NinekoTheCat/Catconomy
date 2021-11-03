@@ -1,8 +1,7 @@
 package ninekothecat.catconomy.interfaces;
 
-import ninekothecat.catconomy.enums.TransactionResult;
-
-import java.util.logging.Logger;
+import ninekothecat.catplugincore.money.enums.TransactionResult;
+import ninekothecat.catplugincore.money.interfaces.ITransaction;
 
 /**
  * The interface Cat logger.

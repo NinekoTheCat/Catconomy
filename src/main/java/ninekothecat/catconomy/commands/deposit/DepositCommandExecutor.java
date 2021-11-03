@@ -2,8 +2,8 @@ package ninekothecat.catconomy.commands.deposit;
 
 import ninekothecat.catconomy.Catconomy;
 import ninekothecat.catconomy.defaultImplementations.CatTransaction;
-import ninekothecat.catconomy.enums.TransactionType;
-import org.bukkit.Bukkit;
+import ninekothecat.catplugincore.money.enums.TransactionType;
+import ninekothecat.catplugincore.utils.player.PlayerFinder;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -12,13 +12,16 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.UUID;
 
 public class DepositCommandExecutor implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (args.length == 2) {
-            Player player = Catconomy.getPlayerFromName(args[0]);
+            Player player = PlayerFinder.getPlayerFromName(args[0]);
             if (player != null && sender instanceof Player) {
                 double amount;
                 try {

@@ -2,8 +2,9 @@ package ninekothecat.catconomy.commands.give;
 
 import ninekothecat.catconomy.Catconomy;
 import ninekothecat.catconomy.defaultImplementations.CatTransaction;
-import ninekothecat.catconomy.enums.TransactionType;
 import ninekothecat.catconomy.interfaces.ICatEconomyCommandExecutor;
+import ninekothecat.catplugincore.money.enums.TransactionType;
+import ninekothecat.catplugincore.utils.player.PlayerFinder;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -22,7 +23,7 @@ public class GiveCommandExecutor implements ICatEconomyCommandExecutor {
             return false;
         }
         if (args.length == 2) {
-            ArrayList<UUID> usersInvolved = new ArrayList<>(Collections.singleton(Objects.requireNonNull(Catconomy.getPlayerFromName(args[0])).getUniqueId()));
+            ArrayList<UUID> usersInvolved = new ArrayList<>(Collections.singleton(Objects.requireNonNull(PlayerFinder.getPlayerFromName(args[0])).getUniqueId()));
             double amount;
             try {
                 amount = Double.parseDouble(args[1]);

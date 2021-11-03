@@ -1,17 +1,14 @@
 package ninekothecat.catconomy.logging;
 
 import ninekothecat.catconomy.Catconomy;
-import ninekothecat.catconomy.enums.TransactionResult;
 import ninekothecat.catconomy.interfaces.ICatLogger;
-import ninekothecat.catconomy.interfaces.ITransaction;
-import org.apache.logging.log4j.LogManager;
+import ninekothecat.catplugincore.money.enums.TransactionResult;
+import ninekothecat.catplugincore.money.interfaces.ITransaction;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.LoggerContext;
-import org.w3c.dom.DOMConfiguration;
 
-import java.io.File;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Objects;
