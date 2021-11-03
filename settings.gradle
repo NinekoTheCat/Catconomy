@@ -1,1 +1,6 @@
 rootProject.name = 'catconomy'
+sourceControl {
+    gitRepository("https://github.com/NinekoTheCat/Cat-Plugin-Core.git") {
+        producesModule("ninekothecat:catplugincore")
+    }
+}

@@ -1,6 +1,6 @@
 package ninekothecat.catconomy.defaultImplementations;
 
-import ninekothecat.catconomy.interfaces.ICurrencyPrefix;
+import ninekothecat.catplugincore.money.interfaces.ICurrencyPrefix;
 
 @SuppressWarnings({"unused"})
 public class CatPrefix implements ICurrencyPrefix {

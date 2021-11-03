@@ -17,22 +17,23 @@ import ninekothecat.catconomy.defaultImplementations.database.SQL.CatSQLDatabase
 import ninekothecat.catconomy.enums.DefaultDatabaseType;
 import ninekothecat.catconomy.eventlisteners.CatPlayerJoinHandler;
 import ninekothecat.catconomy.integrations.CatVaultIntegration;
-import ninekothecat.catconomy.interfaces.*;
+import ninekothecat.catconomy.interfaces.ICatLogger;
+import ninekothecat.catconomy.interfaces.IDatabase;
+import ninekothecat.catconomy.interfaces.IPermissionGuard;
 import ninekothecat.catconomy.logging.CatLogger;
+import ninekothecat.catplugincore.money.interfaces.IBalanceHandler;
+import ninekothecat.catplugincore.money.interfaces.ICurrencyPrefix;
+import ninekothecat.catplugincore.utils.config.ConfigReader;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.ServicesManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.sql.SQLException;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.logging.Logger;
 
@@ -42,7 +43,7 @@ public final class Catconomy extends JavaPlugin {
     public static Logger logger;
     public static ICurrencyPrefix prefix;
     public static CatEconomyCommandHandler catEconomyCommandHandler;
-    static IBalanceHandler balanceHandler;
+    private static IBalanceHandler balanceHandler;
     public static ICatLogger iCatLogger;
 
     @Override
@@ -73,20 +74,6 @@ public final class Catconomy extends JavaPlugin {
         final CatEconomyCommand catEconomyCommand = new CatEconomyCommand(name);
         catEconomyCommand.setPermission(permission);
         catEconomyCommandHandler.put(name, catEconomyCommand);
-    }
-
-    @Nullable
-    public static Player getPlayerFromName(String playerName) {
-        Player player = null;
-        for (Player player1 : Bukkit.getServer().getOnlinePlayers())
-            if (player1.getDisplayName().toUpperCase(Locale.ROOT).equals(playerName.toUpperCase(Locale.ROOT)))
-                player = player1;
-        if (player == null) {
-            for (OfflinePlayer player1 : Bukkit.getServer().getOfflinePlayers())
-                if (Objects.requireNonNull(player1.getName()).toUpperCase(Locale.ROOT).equals(playerName.toUpperCase(Locale.ROOT)))
-                    player = player1.getPlayer();
-        }
-        return player;
     }
 
     @Override
@@ -184,7 +171,7 @@ public final class Catconomy extends JavaPlugin {
                     this.getServer().getServicesManager().register(IDatabase.class,new CatMapDBDatabase(),this,ServicePriority.Low);
                     break;
                 case SQL:
-                    YamlConfiguration yamlConfiguration = loadConfiguration("Sql.yml");
+                    YamlConfiguration yamlConfiguration = ConfigReader.loadConfigurationFromDataFolder("Sql.yml",this);
                     final CatSQLDatabase catSQLDatabase = new CatSQLDatabase(yamlConfiguration.getString("user"),
                             yamlConfiguration.getString("password"),
                             yamlConfiguration.getString("host"),
@@ -194,12 +181,5 @@ public final class Catconomy extends JavaPlugin {
                     break;
             }
         } catch (IllegalArgumentException | SQLException ignored) {}
-    }
-    private YamlConfiguration loadConfiguration(String file) {
-        File file1 = new File(this.getDataFolder(), file);
-        if (!file1.exists()) {
-            this.saveResource(file, false);
-        }
-        return YamlConfiguration.loadConfiguration(file1);
     }
 }

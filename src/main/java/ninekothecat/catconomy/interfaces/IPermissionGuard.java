@@ -1,5 +1,6 @@
-package ninekothecat.catconomy.interfaces;
 
+package ninekothecat.catconomy.interfaces;
+import ninekothecat.catplugincore.money.interfaces.ITransaction;
 /**
  * The interface Permission guard.
  */

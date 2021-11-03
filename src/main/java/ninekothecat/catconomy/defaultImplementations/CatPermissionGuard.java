@@ -1,7 +1,7 @@
 package ninekothecat.catconomy.defaultImplementations;
 
 import ninekothecat.catconomy.interfaces.IPermissionGuard;
-import ninekothecat.catconomy.interfaces.ITransaction;
+import ninekothecat.catplugincore.money.interfaces.ITransaction;
 import org.bukkit.Bukkit;
 
 import java.util.Objects;

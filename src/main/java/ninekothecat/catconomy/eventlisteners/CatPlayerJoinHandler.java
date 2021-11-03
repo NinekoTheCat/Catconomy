@@ -2,7 +2,7 @@ package ninekothecat.catconomy.eventlisteners;
 
 import ninekothecat.catconomy.Catconomy;
 import ninekothecat.catconomy.defaultImplementations.CatTransaction;
-import ninekothecat.catconomy.enums.TransactionType;
+import ninekothecat.catplugincore.money.enums.TransactionType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
