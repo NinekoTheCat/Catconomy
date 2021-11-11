@@ -1,29 +1,18 @@
-package ninekothecat.catconomy.defaultImplementations;
+package ninekothecat.catconomy.defaultImplementations
 
-import ninekothecat.catplugincore.money.interfaces.ICurrencyPrefix;
+import ninekothecat.catplugincore.money.interfaces.ICurrencyPrefix
 
-@SuppressWarnings({"unused"})
-public class CatPrefix implements ICurrencyPrefix {
-    private final String shortPrefix;
-    private final String longPrefix;
+class CatPrefix : ICurrencyPrefix {
+    override val shortPrefix: String
+    override val longPrefix: String
 
-    public CatPrefix(String shortPrefix) {
-        this.shortPrefix = shortPrefix;
-        longPrefix = shortPrefix;
+    constructor(shortPrefix: String) {
+        this.shortPrefix = shortPrefix
+        longPrefix = shortPrefix
     }
 
-    public CatPrefix(String shortPrefix, String longPrefix) {
-        this.shortPrefix = shortPrefix;
-        this.longPrefix = longPrefix;
-    }
-
-    @Override
-    public String getShortPrefix() {
-        return shortPrefix;
-    }
-
-    @Override
-    public String getLongPrefix() {
-        return longPrefix;
+    constructor(shortPrefix: String, longPrefix: String) {
+        this.shortPrefix = shortPrefix
+        this.longPrefix = longPrefix
     }
 }

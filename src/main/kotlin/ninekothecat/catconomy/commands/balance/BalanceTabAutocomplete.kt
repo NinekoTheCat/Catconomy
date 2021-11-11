@@ -1,20 +1,20 @@
-package ninekothecat.catconomy.commands.balance;
+package ninekothecat.catconomy.commands.balance
 
-import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
-import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import org.bukkit.Bukkit
+import org.bukkit.command.Command
+import org.bukkit.command.CommandSender
+import org.bukkit.command.TabCompleter
+import org.bukkit.entity.Player
+import java.util.stream.Collectors
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-public class BalanceTabAutocomplete implements TabCompleter {
-    @Override
-    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
-        if (args.length == 0)
-            return Bukkit.getServer().getOnlinePlayers().stream().map(Player::getDisplayName).collect(Collectors.toList());
-        return null;
+class BalanceTabAutocomplete : TabCompleter {
+    override fun onTabComplete(
+        sender: CommandSender,
+        command: Command,
+        alias: String,
+        args: Array<String>
+    ): List<String>? {
+        return if (args.isEmpty()) Bukkit.getServer().onlinePlayers.stream().map { obj: Player -> obj.displayName }
+            .collect(Collectors.toList()) else null
     }
 }

@@ -1,49 +1,34 @@
-package ninekothecat.catconomy.commands.catconomycommand;
+package ninekothecat.catconomy.commands.catconomycommand
 
-import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.NotNull;
+import org.bukkit.ChatColor
+import org.bukkit.command.*
+import java.util.*
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-
-public class CatEconomyCommandHandler implements CommandExecutor {
-    private final HashMap<String, CatEconomyCommand> commands = new HashMap<>();
-
-    public HashMap<String, CatEconomyCommand> getCommands() {
-        return commands;
+class CatEconomyCommandHandler : CommandExecutor {
+    val commands = HashMap<String, CatEconomyCommand>()
+    operator fun get(name: String): CatEconomyCommand? {
+        return commands[name]
     }
 
-    public CatEconomyCommand get(String name) {
-        return commands.get(name);
+    fun put(name: String, catEconomyCommand: CatEconomyCommand) {
+        commands[name] = catEconomyCommand
     }
 
-    public void put(String name, CatEconomyCommand catEconomyCommand) {
-        commands.put(name, catEconomyCommand);
-    }
-
-    @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if (args.length > 0) {
-
-            if (commands.containsKey(args[0]) && commands.get(args[0]).hasExecutor()) {
-                final CatEconomyCommand catEconomyCommand = commands.get(args[0]);
-                List<String> arg2 = new ArrayList<>(Arrays.asList(args));
-                arg2.remove(0);
-                String[] args3 = arg2.toArray(new String[args.length - 1]);
-                if (sender.hasPermission(catEconomyCommand.getPermission())){
-                    return catEconomyCommand.getExecutor().onCommand(sender, command, label, args3);
-                }else {
-                    sender.sendMessage(ChatColor.RED + "you can't do that");
-                    return false;
+    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
+        if (args.isNotEmpty()) {
+            if (commands.containsKey(args[0]) && commands[args[0]]!!.hasExecutor()) {
+                val catEconomyCommand = commands[args[0]]
+                val arg2: MutableList<String> = ArrayList(listOf(*args))
+                arg2.removeAt(0)
+                val args3 = arg2.toTypedArray()
+                return if (sender.hasPermission(catEconomyCommand!!.permission)) {
+                    catEconomyCommand.executor!!.onCommand(sender, command, label, args3)
+                } else {
+                    sender.sendMessage(ChatColor.RED.toString() + "you can't do that")
+                    false
                 }
-
             }
         }
-        return false;
+        return false
     }
 }

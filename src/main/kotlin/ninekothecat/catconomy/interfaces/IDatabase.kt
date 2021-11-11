@@ -1,29 +1,25 @@
-package ninekothecat.catconomy.interfaces;
+package ninekothecat.catconomy.interfaces
 
-
-import java.util.Collection;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*
 
 /**
  * basic database interface, use this if you'd like to make a database compatible with this plugin
  */
-public interface IDatabase {
-
+interface IDatabase {
     /**
      * returns true if the user exists
      *
      * @param user the user
      * @return userExists boolean
      */
-    boolean userExists(UUID user);
+    fun userExists(user: UUID): Boolean
 
     /**
      * Removes a user.
      *
      * @param user the user
      */
-    void removeUser(UUID user);
+    fun removeUser(user: UUID)
 
     /**
      * Sets user balance.
@@ -31,7 +27,7 @@ public interface IDatabase {
      * @param user    the user
      * @param balance the balance
      */
-    void setUserBalance(UUID user, double balance);
+    fun setUserBalance(user: UUID, balance: Double)
 
     /**
      * Gets user balance.
@@ -39,14 +35,14 @@ public interface IDatabase {
      * @param user the user
      * @return the user balance
      */
-    double getUserBalance(UUID user);
+    fun getUserBalance(user: UUID): Double
 
     /**
      * Sets a batch of users' balance.
      *
      * @param userBalances the user balances
      */
-    void setUsersBalance(Map<UUID, Double> userBalances);
+    fun setUsersBalance(userBalances: MutableMap<UUID, Double>)
 
     /**
      * Gets a batch of users' balance.
@@ -54,5 +50,5 @@ public interface IDatabase {
      * @param users the users
      * @return the users balance
      */
-    Map<UUID, Double> getUsersBalance(Collection<UUID> users);
+    fun getUsersBalance(users: Collection<UUID>): Map<UUID, Double?>
 }

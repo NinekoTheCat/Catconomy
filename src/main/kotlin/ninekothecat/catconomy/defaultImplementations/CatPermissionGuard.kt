@@ -1,62 +1,58 @@
-package ninekothecat.catconomy.defaultImplementations;
+package ninekothecat.catconomy.defaultImplementations
 
-import ninekothecat.catconomy.interfaces.IPermissionGuard;
-import ninekothecat.catplugincore.money.interfaces.ITransaction;
-import org.bukkit.Bukkit;
+import ninekothecat.catconomy.interfaces.IPermissionGuard
+import ninekothecat.catplugincore.money.enums.TransactionType
+import ninekothecat.catplugincore.money.interfaces.ITransaction
+import org.bukkit.Bukkit
+import java.util.*
 
-import java.util.Objects;
-import java.util.UUID;
-
-public class CatPermissionGuard implements IPermissionGuard {
-    @Override
-    public boolean isPermitted(ITransaction transaction) {
-        if (transaction.isConsole()) {
-            return true;
+class CatPermissionGuard : IPermissionGuard {
+    override fun isPermitted(transaction: ITransaction): Boolean {
+        if (transaction.isConsole) {
+            return true
         }
-        UUID transactionInitiator = transaction.getInitiator();
-        switch (transaction.getTransactionType()) {
-            case DELETE_USER:
-                return canDeleteUser(transactionInitiator);
-            case CREATE_USER:
-                return canCreateUser(transactionInitiator);
-            case TRANSFER_CURRENCY:
-                return canTransferCurrency(transaction.getUsersInvolved().iterator().next(), transactionInitiator);
-            case SUBTRACT_CURRENCY:
-                return canSubtractCurrency(transactionInitiator);
-            case GIVE_CURRENCY:
-                return canGiveCurrency(transactionInitiator);
+        val transactionInitiator = transaction.initiator
+        return when (transaction.transactionType) {
+            TransactionType.DELETE_USER -> canDeleteUser(transactionInitiator)
+            TransactionType.CREATE_USER -> canCreateUser(transactionInitiator)
+            TransactionType.TRANSFER_CURRENCY -> canTransferCurrency(
+                transaction.usersInvolved!!.iterator().next()!!, transactionInitiator
+            )
+            TransactionType.SUBTRACT_CURRENCY -> canSubtractCurrency(
+                transactionInitiator
+            )
+            TransactionType.GIVE_CURRENCY -> canGiveCurrency(transactionInitiator)
         }
-        return false;
     }
 
-    private boolean canTransferCurrency(UUID fromUser, UUID initiator) {
-        if (Bukkit.getServer().getBannedPlayers().contains(Bukkit.getServer().getPlayer(fromUser))) {
-            return false;
+    private fun canTransferCurrency(fromUser: UUID, initiator: UUID?): Boolean {
+        if (Bukkit.getServer().bannedPlayers.contains(Bukkit.getServer().getPlayer(fromUser))) {
+            return false
         }
-        if (fromUser == initiator) {
-            return true;
+        return if (fromUser === initiator) {
+            true
         } else {
-            return isPermitted(initiator,"catconomy.transfer");
+            isPermitted(initiator, "catconomy.transfer")
         }
     }
 
-    private boolean isPermitted(UUID initiator,String permissionName) {
-        return Objects.requireNonNull(Bukkit.getServer().getPlayer(initiator)).hasPermission(permissionName);
+    private fun isPermitted(initiator: UUID?, permissionName: String): Boolean {
+        return Objects.requireNonNull(Bukkit.getServer().getPlayer(initiator)).hasPermission(permissionName)
     }
 
-    private boolean canSubtractCurrency(UUID user) {
-        return isPermitted(user,"catconomy.subtract");
+    private fun canSubtractCurrency(user: UUID?): Boolean {
+        return isPermitted(user, "catconomy.subtract")
     }
 
-    private boolean canGiveCurrency(UUID user) {
-        return isPermitted(user,"catconomy.give");
+    private fun canGiveCurrency(user: UUID?): Boolean {
+        return isPermitted(user, "catconomy.give")
     }
 
-    private boolean canCreateUser(UUID user) {
-        return isPermitted(user,"catconomy.create.user");
+    private fun canCreateUser(user: UUID?): Boolean {
+        return isPermitted(user, "catconomy.create.user")
     }
 
-    private boolean canDeleteUser(UUID user) {
-        return isPermitted(user, "catconomy.delete.user");
+    private fun canDeleteUser(user: UUID?): Boolean {
+        return isPermitted(user, "catconomy.delete.user")
     }
 }

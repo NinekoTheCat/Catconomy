@@ -1,83 +1,72 @@
-package ninekothecat.catconomy.defaultImplementations.database;
+package ninekothecat.catconomy.defaultImplementations.database
 
-import ninekothecat.catconomy.Catconomy;
-import ninekothecat.catconomy.interfaces.IDatabase;
-import org.mapdb.DB;
-import org.mapdb.DBMaker;
-
-import java.io.File;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentMap;
-
-@SuppressWarnings("unchecked")
-public class CatMapDBDatabase implements IDatabase {
-    private final DBMaker.Maker fileDB;
-
-    public CatMapDBDatabase() {
-        File dbFile = new File(Catconomy.getProvidingPlugin(Catconomy.class).getDataFolder(), "accounts.db");
-        fileDB = DBMaker.fileDB(dbFile);
+import ninekothecat.catconomy.Catconomy
+import ninekothecat.catconomy.interfaces.IDatabase
+import org.bukkit.plugin.java.JavaPlugin
+import org.mapdb.DB
+import org.mapdb.DBMaker.Maker
+import org.mapdb.DBMaker.fileDB
+import java.io.File
+import java.util.*
+import java.util.concurrent.ConcurrentMap
+@Suppress("UNCHECKED_CAST")
+class CatMapDBDatabase : IDatabase {
+    private val fileDB: Maker
+    override fun userExists(user: UUID): Boolean {
+        val db: DB = fileDB.make()
+        val userMap = db.hashMap("accounts").createOrOpen() as ConcurrentMap<UUID, Double>
+        val exists = userMap.containsKey(user)
+        db.close()
+        return exists
     }
 
-    @Override
-    public boolean userExists(UUID user) {
-        DB db = fileDB.make();
-        ConcurrentMap<UUID, Double> user_map = (ConcurrentMap<UUID, Double>) db.hashMap("accounts").createOrOpen();
-        boolean exists = user_map.containsKey(user);
-        db.close();
-        return exists;
+    override fun removeUser(user: UUID) {
+        val db: DB = fileDB.make()
+        val userMap = db.hashMap("accounts").createOrOpen() as ConcurrentMap<UUID, Double>
+        userMap.remove(user)
+        db.commit()
+        db.close()
     }
 
-    @Override
-    public void removeUser(UUID user) {
-        DB db = fileDB.make();
-        ConcurrentMap<UUID, Double> user_map = (ConcurrentMap<UUID, Double>) db.hashMap("accounts").createOrOpen();
-        user_map.remove(user);
-        db.commit();
-        db.close();
+    override fun setUserBalance(user: UUID, balance: Double) {
+        val db: DB = fileDB.make()
+        val userMap = db.hashMap("accounts").createOrOpen() as ConcurrentMap<UUID, Double>
+        userMap[user] = balance
+        db.commit()
+        db.close()
     }
 
-    @Override
-    public void setUserBalance(UUID user, double balance) {
-        DB db = fileDB.make();
-        ConcurrentMap<UUID, Double> user_map = (ConcurrentMap<UUID, Double>) db.hashMap("accounts").createOrOpen();
-        user_map.put(user, balance);
-        db.commit();
-        db.close();
+    override fun getUserBalance(user: UUID): Double {
+        val db: DB = fileDB.make()
+        val userMap = db.hashMap("accounts").createOrOpen() as ConcurrentMap<UUID, Double>
+        val amount = userMap.getOrDefault(user, 0.0)
+        db.close()
+        return amount
     }
 
-    @Override
-    public double getUserBalance(UUID user) {
-        DB db = fileDB.make();
-        ConcurrentMap<UUID, Double> user_map = (ConcurrentMap<UUID, Double>) db.hashMap("accounts").createOrOpen();
-        double amount = user_map.getOrDefault(user, 0d);
-        db.close();
-        return amount;
-    }
-
-    @Override
-    public void setUsersBalance(Map<UUID, Double> userBalances) {
-        DB db = fileDB.make();
-        ConcurrentMap<UUID, Double> user_map = (ConcurrentMap<UUID, Double>) db.hashMap("accounts").createOrOpen();
-
-        for (UUID user : userBalances.keySet()) {
-            user_map.put(user, userBalances.get(user));
+    override fun setUsersBalance(userBalances: MutableMap<UUID, Double>) {
+        val db: DB = fileDB.make()
+        val userMap = db.hashMap("accounts").createOrOpen() as ConcurrentMap<UUID, Double?>
+        for (user in userBalances.keys) {
+            userMap[user] = userBalances[user]
         }
-        db.commit();
-        db.close();
+        db.commit()
+        db.close()
     }
 
-    @Override
-    public Map<UUID, Double> getUsersBalance(Collection<UUID> users) {
-        DB db = fileDB.make();
-        ConcurrentMap<UUID, Double> user_map = (ConcurrentMap<UUID, Double>) db.hashMap("accounts").createOrOpen();
-        Map<UUID, Double> gottenUsers = new HashMap<>();
-        for (UUID user : users) {
-            gottenUsers.put(user, user_map.get(user));
+    override fun getUsersBalance(users: Collection<UUID>): Map<UUID, Double?> {
+        val db: DB = fileDB.make()
+        val userMap = db.hashMap("accounts").createOrOpen() as ConcurrentMap<UUID, Double>
+        val gottenUsers: MutableMap<UUID, Double?> = HashMap()
+        for (user in users) {
+            gottenUsers[user] = userMap[user]
         }
-        db.close();
-        return gottenUsers;
+        db.close()
+        return gottenUsers
+    }
+
+    init {
+        val dbFile = File(JavaPlugin.getProvidingPlugin(Catconomy::class.java).dataFolder, "accounts.db")
+        fileDB = fileDB(dbFile)
     }
 }

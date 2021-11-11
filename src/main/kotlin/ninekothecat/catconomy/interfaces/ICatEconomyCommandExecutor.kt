@@ -1,8 +1,8 @@
-package ninekothecat.catconomy.interfaces;
+package ninekothecat.catconomy.interfaces
 
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
+import org.bukkit.command.Command
+import org.bukkit.command.CommandSender
 
-public interface ICatEconomyCommandExecutor {
-    boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args);
+interface ICatEconomyCommandExecutor {
+    fun onCommand(sender: CommandSender, cmd: Command, commandLabel: String, args: Array<String>): Boolean
 }

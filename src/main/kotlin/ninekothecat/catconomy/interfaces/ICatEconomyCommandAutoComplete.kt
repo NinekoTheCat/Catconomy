@@ -1,11 +1,8 @@
-package ninekothecat.catconomy.interfaces;
+package ninekothecat.catconomy.interfaces
 
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.NotNull;
+import org.bukkit.command.Command
+import org.bukkit.command.CommandSender
 
-import java.util.List;
-
-public interface ICatEconomyCommandAutoComplete {
-    List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args);
+interface ICatEconomyCommandAutoComplete {
+    fun onTabComplete(sender: CommandSender, command: Command, alias: String, args: Array<String>?): List<String>?
 }

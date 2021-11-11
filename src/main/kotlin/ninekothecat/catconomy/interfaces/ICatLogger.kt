@@ -1,18 +1,18 @@
-package ninekothecat.catconomy.interfaces;
+package ninekothecat.catconomy.interfaces
 
-import ninekothecat.catplugincore.money.enums.TransactionResult;
-import ninekothecat.catplugincore.money.interfaces.ITransaction;
+import ninekothecat.catplugincore.money.enums.TransactionResult
+import ninekothecat.catplugincore.money.interfaces.ITransaction
 
 /**
  * The interface Cat logger.
  */
-public interface ICatLogger {
+interface ICatLogger {
     /**
      * logs a successful transaction.
      *
      * @param transaction the transaction
      */
-    void success(ITransaction transaction);
+    fun success(transaction: ITransaction)
 
     /**
      * logs a failed transaction
@@ -20,7 +20,7 @@ public interface ICatLogger {
      * @param transaction the transaction
      * @param result      the result
      */
-    void fail(ITransaction transaction, TransactionResult result);
+    fun fail(transaction: ITransaction, result: TransactionResult)
 
     /**
      * logs an error transaction
@@ -29,5 +29,5 @@ public interface ICatLogger {
      * @param result      the result
      * @param exception   the exception
      */
-    void error(ITransaction transaction,TransactionResult result, Exception exception);
+    fun error(transaction: ITransaction, result: TransactionResult, exception: Exception?)
 }

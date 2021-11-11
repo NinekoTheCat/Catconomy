@@ -1,6 +1,5 @@
-package ninekothecat.catconomy.enums;
+package ninekothecat.catconomy.enums
 
-public enum DefaultDatabaseType {
-    MapDBFile,
-    SQL
+enum class DefaultDatabaseType {
+    MapDBFile, SQL
 }

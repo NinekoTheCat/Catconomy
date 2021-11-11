@@ -1,15 +1,16 @@
+package ninekothecat.catconomy.interfaces
 
-package ninekothecat.catconomy.interfaces;
-import ninekothecat.catplugincore.money.interfaces.ITransaction;
+import ninekothecat.catplugincore.money.interfaces.ITransaction
+
 /**
  * The interface Permission guard.
  */
-public interface IPermissionGuard {
+interface IPermissionGuard {
     /**
      * checks if the transaction is permitted.
      *
      * @param transaction the transaction
      * @return the boolean
      */
-    boolean isPermitted(ITransaction transaction);
+    fun isPermitted(transaction: ITransaction): Boolean
 }

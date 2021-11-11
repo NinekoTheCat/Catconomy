@@ -1,299 +1,269 @@
-package ninekothecat.catconomy.integrations;
+package ninekothecat.catconomy.integrations
 
-import net.milkbowl.vault.economy.Economy;
-import net.milkbowl.vault.economy.EconomyResponse;
-import ninekothecat.catconomy.Catconomy;
-import ninekothecat.catconomy.defaultImplementations.CatTransaction;
-import ninekothecat.catplugincore.money.enums.TransactionResult;
-import ninekothecat.catplugincore.money.enums.TransactionType;
-import ninekothecat.catplugincore.utils.player.PlayerFinderKt;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
+import net.milkbowl.vault.economy.Economy
+import net.milkbowl.vault.economy.EconomyResponse
+import ninekothecat.catconomy.Catconomy
+import ninekothecat.catconomy.defaultImplementations.CatTransaction
+import ninekothecat.catplugincore.money.enums.TransactionResult
+import ninekothecat.catplugincore.money.enums.TransactionResult.Companion.toEconomyResponseType
+import ninekothecat.catplugincore.money.enums.TransactionType
+import ninekothecat.catplugincore.utils.player.getPlayerFromName
+import org.bukkit.Bukkit
+import org.bukkit.OfflinePlayer
+import org.bukkit.plugin.Plugin
+import org.bukkit.plugin.java.JavaPlugin
+import java.text.MessageFormat
+import java.util.*
 
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-
-public class CatVaultIntegration implements Economy {
-
-    public static final Plugin PLUGIN = Bukkit.getPluginManager().getPlugin("Vault");
-
-    @Override
-    public boolean isEnabled() {
-        return Catconomy.getBalanceHandler() != null;
+class CatVaultIntegration : Economy {
+    override fun isEnabled(): Boolean {
+        return Catconomy.getBalanceHandler() != null
     }
 
-    @Override
-    public String getName() {
-        return Catconomy.getProvidingPlugin(Catconomy.class).getName();
+    override fun getName(): String {
+        return JavaPlugin.getProvidingPlugin(Catconomy::class.java).name
     }
 
-    @Override
-    public boolean hasBankSupport() {
-        return false;
+    override fun hasBankSupport(): Boolean {
+        return false
     }
 
-    @Override
-    public int fractionalDigits() {
-        return -1;
+    override fun fractionalDigits(): Int {
+        return -1
     }
 
-    @Override
-    public String format(double amount) {
-        return MessageFormat.format("{0}{1}", amount, Catconomy.prefix.getShortPrefix());
+    override fun format(amount: Double): String {
+        return MessageFormat.format("{0}{1}", amount, Catconomy.prefix!!.shortPrefix)
     }
 
-    @Override
-    public String currencyNamePlural() {
-        return Catconomy.prefix.getShortPrefix();
+    override fun currencyNamePlural(): String {
+        return Catconomy.prefix!!.shortPrefix
     }
 
-    @Override
-    public String currencyNameSingular() {
-        return Catconomy.prefix.getLongPrefix();
+    override fun currencyNameSingular(): String {
+        return Catconomy.prefix!!.longPrefix
     }
 
-    @Override
-    public boolean hasAccount(String playerName) {
-        Player player = PlayerFinderKt.getPlayerFromName(playerName);
-        if (player != null) {
-            return Catconomy.getBalanceHandler().userExists(player.getUniqueId());
+    override fun hasAccount(playerName: String): Boolean {
+        val player = getPlayerFromName(playerName)
+        return if (player != null) {
+            Catconomy.getBalanceHandler()!!.userExists(player.uniqueId)
         } else {
-            return false;
+            false
         }
-
     }
 
-    @Override
-    public boolean hasAccount(OfflinePlayer player) {
-        return Catconomy.getBalanceHandler().userExists(player.getUniqueId());
+    override fun hasAccount(player: OfflinePlayer): Boolean {
+        return Catconomy.getBalanceHandler()!!.userExists(player.uniqueId)
     }
 
-    @Override
-    public boolean hasAccount(String playerName, String worldName) {
-        return hasAccount(playerName);
+    override fun hasAccount(playerName: String, worldName: String): Boolean {
+        return hasAccount(playerName)
     }
 
-    @Override
-    public boolean hasAccount(OfflinePlayer player, String worldName) {
-        return hasAccount(player);
+    override fun hasAccount(player: OfflinePlayer, worldName: String): Boolean {
+        return hasAccount(player)
     }
 
-    @Override
-    public double getBalance(String playerName) {
-        return Catconomy.getBalanceHandler().getBalance(Objects.requireNonNull(PlayerFinderKt.getPlayerFromName(playerName)).getUniqueId());
+    override fun getBalance(playerName: String): Double {
+        return Catconomy.getBalanceHandler()!!
+            .getBalance(Objects.requireNonNull(getPlayerFromName(playerName))!!.uniqueId)
     }
 
-    @Override
-    public double getBalance(OfflinePlayer player) {
-        return Catconomy.getBalanceHandler().getBalance(player.getUniqueId());
+    override fun getBalance(player: OfflinePlayer): Double {
+        return Catconomy.getBalanceHandler()!!.getBalance(player.uniqueId)
     }
 
-    @Override
-    public double getBalance(String playerName, String world) {
-        return getBalance(playerName);
+    override fun getBalance(playerName: String, world: String): Double {
+        return getBalance(playerName)
     }
 
-    @Override
-    public double getBalance(OfflinePlayer player, String world) {
-        return getBalance(player);
+    override fun getBalance(player: OfflinePlayer, world: String): Double {
+        return getBalance(player)
     }
 
-    @Override
-    public boolean has(String playerName, double amount) {
-        return getBalance(playerName) >= amount;
+    override fun has(playerName: String, amount: Double): Boolean {
+        return getBalance(playerName) >= amount
     }
 
-    @Override
-    public boolean has(OfflinePlayer player, double amount) {
-        return Catconomy.getBalanceHandler().getBalance(player.getUniqueId()) >= amount;
+    override fun has(player: OfflinePlayer, amount: Double): Boolean {
+        return Catconomy.getBalanceHandler()!!.getBalance(player.uniqueId) >= amount
     }
 
-    @Override
-    public boolean has(String playerName, String worldName, double amount) {
-        return has(playerName, amount);
+    override fun has(playerName: String, worldName: String, amount: Double): Boolean {
+        return has(playerName, amount)
     }
 
-    @Override
-    public boolean has(OfflinePlayer player, String worldName, double amount) {
-        return has(player, amount);
+    override fun has(player: OfflinePlayer, worldName: String, amount: Double): Boolean {
+        return has(player, amount)
     }
 
-    @Override
-    public EconomyResponse withdrawPlayer(String playerName, double amount) {
-        CatTransaction transaction = new CatTransaction(TransactionType.SUBTRACT_CURRENCY,
-                true,
+    override fun withdrawPlayer(playerName: String, amount: Double): EconomyResponse {
+        val transaction = CatTransaction(
+            TransactionType.SUBTRACT_CURRENCY,
+            true,
+            amount,
+            null,
+            ArrayList(setOf(Objects.requireNonNull(getPlayerFromName(playerName))!!.uniqueId)),
+            String.format("Withdrawn %s from %s", amount, playerName),
+            PLUGIN
+        )
+        val result: TransactionResult = Catconomy.getBalanceHandler()!!
+            .doTransaction(transaction)
+        return EconomyResponse(amount, getBalance(playerName), toEconomyResponseType(result), result.toString())
+    }
+
+    override fun withdrawPlayer(player: OfflinePlayer, amount: Double): EconomyResponse {
+        val transaction = CatTransaction(
+            TransactionType.SUBTRACT_CURRENCY,
+            true,
+            amount,
+            null,
+            ArrayList(setOf(player.uniqueId)), String.format(
+                "Withdrawn %s from Offline player %s",
                 amount,
-                null,
-                new ArrayList<>(Collections.singleton(Objects.requireNonNull(PlayerFinderKt.getPlayerFromName(playerName)).getUniqueId()))
-                , String.format("Withdrawn %s from %s", amount, playerName),PLUGIN);
-        TransactionResult result = Catconomy.getBalanceHandler().doTransaction(transaction);
-        return new EconomyResponse(amount, getBalance(playerName), TransactionResult.Companion.toEconomyResponseType(result), result.toString());
+                player.name
+            ), PLUGIN
+        )
+        val result: TransactionResult = Catconomy.getBalanceHandler()!!
+            .doTransaction(transaction)
+        return EconomyResponse(amount, getBalance(player), toEconomyResponseType(result), result.toString())
     }
 
-    @Override
-    public EconomyResponse withdrawPlayer(OfflinePlayer player, double amount) {
-        CatTransaction transaction = new CatTransaction(TransactionType.SUBTRACT_CURRENCY,
-                true,
-                amount,
-                null,
-                new ArrayList<>(Collections.singleton(player.getUniqueId())),
-                String.format("Withdrawn %s from Offline player %s",
-                amount,
-                player.getName()),PLUGIN);
-        TransactionResult result = Catconomy.getBalanceHandler().doTransaction(transaction);
-        return new EconomyResponse(amount, getBalance(player), TransactionResult.Companion.toEconomyResponseType(result), result.toString());
+    override fun withdrawPlayer(playerName: String, worldName: String, amount: Double): EconomyResponse {
+        return withdrawPlayer(playerName, amount)
     }
 
-    @Override
-    public EconomyResponse withdrawPlayer(String playerName, String worldName, double amount) {
-        return withdrawPlayer(playerName, amount);
+    override fun withdrawPlayer(player: OfflinePlayer, worldName: String, amount: Double): EconomyResponse {
+        return withdrawPlayer(player, amount)
     }
 
-    @Override
-    public EconomyResponse withdrawPlayer(OfflinePlayer player, String worldName, double amount) {
-        return withdrawPlayer(player, amount);
+    override fun depositPlayer(playerName: String, amount: Double): EconomyResponse {
+        val player = getPlayerFromName(playerName)!!
+        val transaction = CatTransaction(
+            TransactionType.GIVE_CURRENCY,
+            true,
+            amount,
+            null,
+            ArrayList(setOf(player.uniqueId)), String.format("Deposited %s to %s", amount, playerName),
+            PLUGIN
+        )
+        val result: TransactionResult = Catconomy.getBalanceHandler()!!
+            .doTransaction(transaction)
+        return EconomyResponse(amount, getBalance(player), toEconomyResponseType(result), result.toString())
     }
 
-    @Override
-    public EconomyResponse depositPlayer(String playerName, double amount) {
-        Player player = PlayerFinderKt.getPlayerFromName(playerName);
-        assert player != null;
-        CatTransaction transaction = new CatTransaction(TransactionType.GIVE_CURRENCY,
-                true,
-                amount,
-                null,
-                new ArrayList<>(Collections.singleton(player.getUniqueId())),
-                String.format("Deposited %s to %s", amount, playerName),
-                PLUGIN);
-        TransactionResult result = Catconomy.getBalanceHandler().doTransaction(transaction);
-        return new EconomyResponse(amount, getBalance(player), TransactionResult.Companion.toEconomyResponseType(result), result.toString());
+    override fun depositPlayer(player: OfflinePlayer, amount: Double): EconomyResponse {
+        val transaction = CatTransaction(
+            TransactionType.GIVE_CURRENCY,
+            true,
+            amount,
+            null,
+            ArrayList(setOf(player.uniqueId)),
+            "Deposited " + amount + " to Offline Player " + player.name,
+            PLUGIN
+        )
+        val result: TransactionResult = Catconomy.getBalanceHandler()!!
+            .doTransaction(transaction)
+        return EconomyResponse(amount, getBalance(player), toEconomyResponseType(result), result.toString())
     }
 
-    @Override
-    public EconomyResponse depositPlayer(OfflinePlayer player, double amount) {
-        CatTransaction transaction = new CatTransaction(TransactionType.GIVE_CURRENCY,
-                true,
-                amount,
-                null,
-                new ArrayList<>(Collections.singleton(player.getUniqueId())),
-                "Deposited " + amount + " to Offline Player " + player.getName(),
-                PLUGIN
-                );
-        TransactionResult result = Catconomy.getBalanceHandler().doTransaction(transaction);
-        return new EconomyResponse(amount, getBalance(player), TransactionResult.Companion.toEconomyResponseType(result), result.toString());
+    override fun depositPlayer(playerName: String, worldName: String, amount: Double): EconomyResponse {
+        return depositPlayer(playerName, amount)
     }
 
-    @Override
-    public EconomyResponse depositPlayer(String playerName, String worldName, double amount) {
-        return depositPlayer(playerName, amount);
+    override fun depositPlayer(player: OfflinePlayer, worldName: String, amount: Double): EconomyResponse {
+        return depositPlayer(player, amount)
     }
 
-    @Override
-    public EconomyResponse depositPlayer(OfflinePlayer player, String worldName, double amount) {
-        return depositPlayer(player, amount);
+    override fun createBank(name: String, player: String): EconomyResponse {
+        return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "BANKS NOT SUPPORTED")
     }
 
-    @Override
-    public EconomyResponse createBank(String name, String player) {
-        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "BANKS NOT SUPPORTED");
+    override fun createBank(name: String, player: OfflinePlayer): EconomyResponse {
+        return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "BANKS NOT SUPPORTED")
     }
 
-    @Override
-    public EconomyResponse createBank(String name, OfflinePlayer player) {
-        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "BANKS NOT SUPPORTED");
+    override fun deleteBank(name: String): EconomyResponse {
+        return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "BANKS NOT SUPPORTED")
     }
 
-    @Override
-    public EconomyResponse deleteBank(String name) {
-        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "BANKS NOT SUPPORTED");
+    override fun bankBalance(name: String): EconomyResponse {
+        return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "BANKS NOT SUPPORTED")
     }
 
-    @Override
-    public EconomyResponse bankBalance(String name) {
-        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "BANKS NOT SUPPORTED");
+    override fun bankHas(name: String, amount: Double): EconomyResponse {
+        return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "BANKS NOT SUPPORTED")
     }
 
-    @Override
-    public EconomyResponse bankHas(String name, double amount) {
-        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "BANKS NOT SUPPORTED");
+    override fun bankWithdraw(name: String, amount: Double): EconomyResponse {
+        return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "BANKS NOT SUPPORTED")
     }
 
-    @Override
-    public EconomyResponse bankWithdraw(String name, double amount) {
-        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "BANKS NOT SUPPORTED");
+    override fun bankDeposit(name: String, amount: Double): EconomyResponse {
+        return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "BANKS NOT SUPPORTED")
     }
 
-    @Override
-    public EconomyResponse bankDeposit(String name, double amount) {
-        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "BANKS NOT SUPPORTED");
+    override fun isBankOwner(name: String, playerName: String): EconomyResponse {
+        return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "BANKS NOT SUPPORTED")
     }
 
-    @Override
-    public EconomyResponse isBankOwner(String name, String playerName) {
-        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "BANKS NOT SUPPORTED");
+    override fun isBankOwner(name: String, player: OfflinePlayer): EconomyResponse {
+        return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "BANKS NOT SUPPORTED")
     }
 
-    @Override
-    public EconomyResponse isBankOwner(String name, OfflinePlayer player) {
-        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "BANKS NOT SUPPORTED");
+    override fun isBankMember(name: String, playerName: String): EconomyResponse {
+        return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "BANKS NOT SUPPORTED")
     }
 
-    @Override
-    public EconomyResponse isBankMember(String name, String playerName) {
-        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "BANKS NOT SUPPORTED");
+    override fun isBankMember(name: String, player: OfflinePlayer): EconomyResponse {
+        return EconomyResponse(0.0, 0.0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "BANKS NOT SUPPORTED")
     }
 
-    @Override
-    public EconomyResponse isBankMember(String name, OfflinePlayer player) {
-        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "BANKS NOT SUPPORTED");
+    override fun getBanks(): List<String>? {
+        return null
     }
 
-    @Override
-    public List<String> getBanks() {
-        return null;
+    override fun createPlayerAccount(playerName: String): Boolean {
+        val player = getPlayerFromName(playerName)!!
+        val transaction = CatTransaction(
+            TransactionType.CREATE_USER,
+            true,
+            0.0,
+            null,
+            ArrayList(setOf(player.uniqueId)),
+            "Created Account for $playerName With 0 currency",
+            PLUGIN
+        )
+        val result: TransactionResult = Catconomy.getBalanceHandler()!!
+            .doTransaction(transaction)
+        return result == TransactionResult.SUCCESS
     }
 
-    @Override
-    public boolean createPlayerAccount(String playerName) {
-        Player player = PlayerFinderKt.getPlayerFromName(playerName);
-        assert player != null;
-        CatTransaction transaction = new CatTransaction(TransactionType.CREATE_USER,
-                true,
-                0,
-                null,
-                new ArrayList<>(Collections.singleton(player.getUniqueId())),
-                "Created Account for " + playerName + " With 0 currency",
-                PLUGIN
-        );
-        TransactionResult result = Catconomy.getBalanceHandler().doTransaction(transaction);
-        return result == TransactionResult.SUCCESS;
+    override fun createPlayerAccount(player: OfflinePlayer): Boolean {
+        val transaction = CatTransaction(
+            TransactionType.CREATE_USER,
+            true,
+            0.0,
+            null,
+            ArrayList(setOf(player.uniqueId)),
+            "Created Account for Offline player " + player.name + " With 0 currency",
+            PLUGIN
+        )
+        val result: TransactionResult = Catconomy.getBalanceHandler()!!
+            .doTransaction(transaction)
+        return result == TransactionResult.SUCCESS
     }
 
-    @Override
-    public boolean createPlayerAccount(OfflinePlayer player) {
-        CatTransaction transaction = new CatTransaction(TransactionType.CREATE_USER,
-                true,
-                0,
-                null,
-                new ArrayList<>(Collections.singleton(player.getUniqueId())),
-                "Created Account for Offline player " + player.getName() + " With 0 currency",
-                PLUGIN);
-        TransactionResult result = Catconomy.getBalanceHandler().doTransaction(transaction);
-        return result == TransactionResult.SUCCESS;
+    override fun createPlayerAccount(playerName: String, worldName: String): Boolean {
+        return createPlayerAccount(playerName)
     }
 
-    @Override
-    public boolean createPlayerAccount(String playerName, String worldName) {
-        return createPlayerAccount(playerName);
+    override fun createPlayerAccount(player: OfflinePlayer, worldName: String): Boolean {
+        return createPlayerAccount(player)
     }
 
-    @Override
-    public boolean createPlayerAccount(OfflinePlayer player, String worldName) {
-        return createPlayerAccount(player);
+    companion object {
+        val PLUGIN: Plugin = Bukkit.getPluginManager().getPlugin("Vault")
     }
 }
