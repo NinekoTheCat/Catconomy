@@ -52,46 +52,38 @@ class GiveCommandExecutor : ICatEconomyCommandExecutor {
                 amount,
                 sender.uniqueId,
                 usersInvolved,
-                String.format(
-                    "%s Gave %s to %s (%s)",
-                    sender.displayName,
-                    amount,
-                    strings.toTypedArray().contentToString(),
-                    usersInvolved.toTypedArray().contentToString()
-                ),
+                "${sender.displayName} Gave $amount to ${
+                    strings.toTypedArray().contentToString()
+                } (${usersInvolved.toTypedArray().contentToString()})",
                 JavaPlugin.getProvidingPlugin(Catconomy::class.java)
             )
             when (Catconomy.getBalanceHandler()!!.doTransaction(transaction)) {
                 TransactionResult.LACK_OF_PERMS -> {
-                    sender.sendMessage(ChatColor.DARK_RED.toString() + "YOU ARE NOT AUTHORISED TO DO THIS")
+                    sender.sendMessage("${ChatColor.DARK_RED}YOU ARE NOT AUTHORISED TO DO THIS")
                     return false
                 }
                 TransactionResult.INSUFFICIENT_AMOUNT_OF_CURRENCY -> {
-                    sender.sendMessage(ChatColor.DARK_RED.toString() + "FAILED TRANSACTION DUE TO INSUFFICIENT AMOUNT OF CURRENCY")
+                    sender.sendMessage("${ChatColor.DARK_RED}FAILED TRANSACTION DUE TO INSUFFICIENT AMOUNT OF CURRENCY")
                     return false
                 }
                 TransactionResult.USER_DOES_NOT_EXIST -> {
-                    sender.sendMessage(ChatColor.DARK_RED.toString() + "FAILED TRANSACTION DUE TO THE USER NOT EXISTING")
+                    sender.sendMessage("${ChatColor.DARK_RED}FAILED TRANSACTION DUE TO THE USER NOT EXISTING")
                     return false
                 }
                 TransactionResult.USER_ALREADY_EXISTS -> {
-                    sender.sendMessage(ChatColor.DARK_RED.toString() + "FAILED TRANSACTION DUE TO USER ALREADY EXISTING")
+                    sender.sendMessage("${ChatColor.DARK_RED}FAILED TRANSACTION DUE TO USER ALREADY EXISTING")
                     return false
                 }
                 TransactionResult.ILLEGAL_TRANSACTION -> {
-                    sender.sendMessage(ChatColor.DARK_RED.toString() + "FAILED TRANSACTION DUE TO THE TRANSACTION BEING ILLEGAL")
+                    sender.sendMessage("${ChatColor.DARK_RED}FAILED TRANSACTION DUE TO THE TRANSACTION BEING ILLEGAL")
                     return false
                 }
                 TransactionResult.INTERNAL_ERROR -> {
-                    sender.sendMessage(ChatColor.DARK_RED.toString() + "FAILED TRANSACTION DUE TO INTERNAL ERROR")
+                    sender.sendMessage("${ChatColor.DARK_RED}FAILED TRANSACTION DUE TO INTERNAL ERROR")
                     return false
                 }
                 TransactionResult.SUCCESS -> {
-                    sender.sendMessage(
-                        MessageFormat.format(
-                            "{0}given {1} to {2}", ChatColor.GREEN, amount,
-                            args[0]
-                        )
+                    sender.sendMessage("${ChatColor.GREEN}given $amount to ${args[0]}"
                     )
                     return true
                 }

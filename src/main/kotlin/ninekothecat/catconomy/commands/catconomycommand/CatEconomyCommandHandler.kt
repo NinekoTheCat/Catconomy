@@ -24,7 +24,7 @@ class CatEconomyCommandHandler : CommandExecutor {
                 return if (sender.hasPermission(catEconomyCommand!!.permission)) {
                     catEconomyCommand.executor!!.onCommand(sender, command, label, args3)
                 } else {
-                    sender.sendMessage(ChatColor.RED.toString() + "you can't do that")
+                    sender.sendMessage("${ChatColor.RED}you can't do that")
                     false
                 }
             }

@@ -15,20 +15,14 @@ class CatLogger : ICatLogger {
     private var logger: Logger? = null
     override fun success(transaction: ITransaction) {
         val marker: Marker = Log4jMarker(
-            String.format(
-                "%s V%s", transaction.plugin.name,
-                transaction.plugin.description.version
-            )
+            "${transaction.plugin.name} V${transaction.plugin.description.version}"
         )
         logger!!.info(marker, transaction.message)
     }
 
     override fun fail(transaction: ITransaction, result: TransactionResult) {
         val marker: Marker = Log4jMarker(
-            String.format(
-                "%s V%s", transaction.plugin.name,
-                transaction.plugin.description.version
-            )
+            "${transaction.plugin.name} V${transaction.plugin.description.version}"
         )
         logger!!.warn(
             marker,
