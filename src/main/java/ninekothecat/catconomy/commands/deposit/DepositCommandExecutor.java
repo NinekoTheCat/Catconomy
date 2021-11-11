@@ -3,7 +3,7 @@ package ninekothecat.catconomy.commands.deposit;
 import ninekothecat.catconomy.Catconomy;
 import ninekothecat.catconomy.defaultImplementations.CatTransaction;
 import ninekothecat.catplugincore.money.enums.TransactionType;
-import ninekothecat.catplugincore.utils.player.PlayerFinder;
+import ninekothecat.catplugincore.utils.player.PlayerFinderKt;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -21,7 +21,7 @@ public class DepositCommandExecutor implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (args.length == 2) {
-            Player player = PlayerFinder.getPlayerFromName(args[0]);
+            Player player = PlayerFinderKt.getPlayerFromName(args[0]);
             if (player != null && sender instanceof Player) {
                 double amount;
                 try {

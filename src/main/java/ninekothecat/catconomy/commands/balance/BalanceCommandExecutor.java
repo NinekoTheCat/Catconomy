@@ -1,7 +1,7 @@
 package ninekothecat.catconomy.commands.balance;
 
 import ninekothecat.catconomy.Catconomy;
-import ninekothecat.catplugincore.utils.player.PlayerFinder;
+import ninekothecat.catplugincore.utils.player.PlayerFinderKt;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -41,7 +41,7 @@ public class BalanceCommandExecutor implements CommandExecutor {
     }
 
     private void getOtherPlayersMoneyAmount(CommandSender sender, String[] args, String shortPrefix) {
-        Player player = PlayerFinder.getPlayerFromName(args[0]);
+        Player player = PlayerFinderKt.getPlayerFromName(args[0]);
         if (player != null && Catconomy.getBalanceHandler().userExists(player.getUniqueId())) {
             final String MONEY_AMOUNT = Double.toString(Catconomy.getBalanceHandler().getBalance(player.getUniqueId()));
             sender.sendMessage(MessageFormat.format("{0}{1}s balance is : {2}{3} {4}{5}",

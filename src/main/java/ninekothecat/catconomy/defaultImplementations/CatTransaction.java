@@ -3,6 +3,7 @@ package ninekothecat.catconomy.defaultImplementations;
 import ninekothecat.catplugincore.money.enums.TransactionType;
 import ninekothecat.catplugincore.money.interfaces.ITransaction;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,16 +28,19 @@ public class CatTransaction implements ITransaction {
         this.message = message;
     }
 
+    @NotNull
     @Override
     public Plugin getPlugin() {
         return plugin;
     }
 
+    @NotNull
     @Override
     public String getMessage() {
         return message;
     }
 
+    @NotNull
     @Override
     public TransactionType getTransactionType() {
         return this.transactionType;
@@ -58,7 +62,7 @@ public class CatTransaction implements ITransaction {
     }
 
     @Override
-    public Double getAmount() {
+    public double getAmount() {
         return this.amount;
     }
 }

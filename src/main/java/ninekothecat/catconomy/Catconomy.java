@@ -24,7 +24,7 @@ import ninekothecat.catconomy.interfaces.IPermissionGuard;
 import ninekothecat.catconomy.logging.CatLogger;
 import ninekothecat.catplugincore.money.interfaces.IBalanceHandler;
 import ninekothecat.catplugincore.money.interfaces.ICurrencyPrefix;
-import ninekothecat.catplugincore.utils.config.ConfigReader;
+import ninekothecat.catplugincore.utils.config.ConfigReaderKt;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -177,7 +177,7 @@ public final class Catconomy extends JavaPlugin {
                     this.getServer().getServicesManager().register(IDatabase.class,new CatMapDBDatabase(),this,ServicePriority.Low);
                     break;
                 case SQL:
-                    YamlConfiguration yamlConfiguration = ConfigReader.loadConfigurationFromDataFolder("Sql.yml",this);
+                    YamlConfiguration yamlConfiguration = ConfigReaderKt.loadConfigurationFromDataFolder("Sql.yml",this);
                     final CatSQLDatabase catSQLDatabase = new CatSQLDatabase(yamlConfiguration.getString("user"),
                             yamlConfiguration.getString("password"),
                             yamlConfiguration.getString("host"),
