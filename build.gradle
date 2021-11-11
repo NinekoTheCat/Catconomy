@@ -6,7 +6,7 @@ plugins {
 String packagePath = 'ninekothecat.catconomy'
 group(packagePath)
 group = 'ninekothecat'
-version = '0.0.7'
+version = '0.0.8'
 shadowJar {
     dependencies{
         relocate('org.bstats', packagePath + '.dependencies.bstats')
