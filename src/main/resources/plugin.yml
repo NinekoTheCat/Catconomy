@@ -26,6 +26,7 @@ permissions:
       catconomy.transfer: true
       catconomy.create.user: true
       catconomy.delete.user: true
+      catconomy.info: true
   catconomy.transfer:
     description: allows users to transfer money between each other
     default: true
@@ -37,6 +38,9 @@ permissions:
     default: op
   catconomy.subtract:
     description: allows users to subtract aka take money from others
+    default: op
+  catconomy.info:
+    description: allows users to view debug plugin info
     default: op
   catconomy.create.user:
     description: allows users to create new accounts
