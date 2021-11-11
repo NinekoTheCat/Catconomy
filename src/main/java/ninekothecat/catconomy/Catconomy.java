@@ -8,6 +8,7 @@ import ninekothecat.catconomy.commands.catconomycommand.CatEconomyCommandHandler
 import ninekothecat.catconomy.commands.catconomycommand.CatEconomyCommandHandlerAutoCompleter;
 import ninekothecat.catconomy.commands.deposit.DepositCommandExecutor;
 import ninekothecat.catconomy.commands.give.GiveCommandExecutor;
+import ninekothecat.catconomy.commands.info.InfoCommandExecutor;
 import ninekothecat.catconomy.commands.take.TakeCommandExecutor;
 import ninekothecat.catconomy.defaultImplementations.CatBalanceHandler;
 import ninekothecat.catconomy.defaultImplementations.CatPermissionGuard;
@@ -45,9 +46,11 @@ public final class Catconomy extends JavaPlugin {
     public static CatEconomyCommandHandler catEconomyCommandHandler;
     private static IBalanceHandler balanceHandler;
     public static ICatLogger iCatLogger;
+    public static boolean vaultActive;
 
     @Override
     public void onLoad() {
+        vaultActive = false;
         if (getServer().getPluginManager().getPlugin("Vault") != null) {
             this.getLogger().info("Found vault plugin! Enabling");
             enableVaultIntegration();
@@ -96,8 +99,10 @@ public final class Catconomy extends JavaPlugin {
         registerBukkitCommands();
         makeCatConomyCommand("give",Bukkit.getPluginManager().getPermission("catconomy.give"));
         makeCatConomyCommand("take", Bukkit.getPluginManager().getPermission("catconomy.subtract"));
+        makeCatConomyCommand("info", Bukkit.getPluginManager().getPermission("catconomy.info"));
         catEconomyCommandHandler.get("give").setExecutor(new GiveCommandExecutor());
         catEconomyCommandHandler.get("take").setExecutor(new TakeCommandExecutor());
+        catEconomyCommandHandler.get("info").setExecutor(new InfoCommandExecutor());
 
         this.getServer().getPluginManager().registerEvents(catPlayerJoinHandler, this);
     }
@@ -152,6 +157,7 @@ public final class Catconomy extends JavaPlugin {
                 new CatVaultIntegration(),
                 this, ServicePriority.High);
         this.getLogger().info("Registered Vault Integration");
+        vaultActive = true;
     }
 
     private void setPrefix() {
