@@ -1,6 +1,6 @@
 plugins {
     id 'com.github.johnrengelman.shadow' version '7.1.0'
-    id 'org.jetbrains.kotlin.jvm' version '1.5.31'
+    id 'org.jetbrains.kotlin.jvm' version '1.6.0'
 }
 
 String packagePath = 'ninekothecat.catconomy'
@@ -24,8 +24,8 @@ repositories {
 }
 
 dependencies {
-    // https://mvnrepository.com/artifact/log4j/apache-log4j-extras
-    implementation group: 'log4j', name: 'apache-log4j-extras', version: '1.2.17'
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.16.0'
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.16.0'
     implementation 'org.bstats:bstats-bukkit:2.2.1'
     implementation 'org.bstats:bstats-base:2.2.1'
     implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.14.1'
@@ -33,7 +33,7 @@ dependencies {
     implementation group: 'org.lz4', name: 'lz4-java', version: '1.8.0'
     implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.27'
     implementation group: 'ninekothecat' , name: 'catplugincore', version: '0.0.2'
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.31'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.0'
     compileOnly group:'org.bukkit', name: 'bukkit', version: '1.12-R0.1-SNAPSHOT'
     compileOnly group:'com.github.MilkBowl', name: 'VaultAPI', version: '1.7'
 
