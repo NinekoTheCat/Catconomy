@@ -9,6 +9,7 @@ import org.mapdb.DBMaker.fileDB
 import java.io.File
 import java.util.*
 import java.util.concurrent.ConcurrentMap
+
 @Suppress("UNCHECKED_CAST")
 class CatMapDBDatabase : IDatabase {
     private val fileDB: Maker

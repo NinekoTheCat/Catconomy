@@ -1,23 +1,21 @@
 package ninekothecat.catconomy.defaultImplementations
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import ninekothecat.catconomy.Catconomy
 import ninekothecat.catplugincore.money.enums.TransactionResult
 import ninekothecat.catplugincore.money.enums.TransactionType
 import ninekothecat.catplugincore.money.interfaces.IBalanceHandler
 import ninekothecat.catplugincore.money.interfaces.ITransaction
 import java.util.*
-import java.util.concurrent.Executors
-import java.util.concurrent.ThreadPoolExecutor
 
 class CatBalanceHandler(private val doLogs: Boolean) : IBalanceHandler {
-    private val threadPoolExecutor: ThreadPoolExecutor = Executors.newCachedThreadPool() as ThreadPoolExecutor
     override fun doTransaction(transaction: ITransaction): TransactionResult {
         return try {
             if (Catconomy.permissionGuard!!.isPermitted(transaction)) {
-                val resultFuture = threadPoolExecutor.submit<TransactionResult> { getTransactionResult(transaction) }
-                val result = resultFuture.get()
-                logTransaction(transaction, result)
-                result
+                val resultFuture = runBlocking(Dispatchers.IO) { getTransactionResult(transaction) }
+                logTransaction(transaction, resultFuture)
+                resultFuture
             } else {
                 Catconomy.iCatLogger!!.fail(transaction, TransactionResult.LACK_OF_PERMS)
                 TransactionResult.LACK_OF_PERMS
@@ -88,11 +86,11 @@ class CatBalanceHandler(private val doLogs: Boolean) : IBalanceHandler {
                 return TransactionResult.USER_DOES_NOT_EXIST
             }
             val fromUserMoney = getBalanceStatic(fromUser)
-            if (fromUserMoney - amount < 0){
+            if (fromUserMoney - amount < 0) {
                 return TransactionResult.INSUFFICIENT_AMOUNT_OF_CURRENCY
             }
             val toUserMoney = getBalanceStatic(toUser)
-            Catconomy.database!!.setUserBalance(fromUser,fromUserMoney - amount)
+            Catconomy.database!!.setUserBalance(fromUser, fromUserMoney - amount)
             Catconomy.database!!.setUserBalance(toUser, toUserMoney + amount)
             return TransactionResult.SUCCESS
         }

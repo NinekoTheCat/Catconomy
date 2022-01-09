@@ -18,10 +18,12 @@ import ninekothecat.catconomy.defaultImplementations.database.SQL.CatSQLDatabase
 import ninekothecat.catconomy.enums.DefaultDatabaseType
 import ninekothecat.catconomy.eventlisteners.CatPlayerJoinHandler
 import ninekothecat.catconomy.integrations.CatVaultIntegration
+import ninekothecat.catconomy.interfaces.ICatEconomyCommandExecutor
 import ninekothecat.catconomy.interfaces.ICatLogger
 import ninekothecat.catconomy.interfaces.IDatabase
 import ninekothecat.catconomy.interfaces.IPermissionGuard
 import ninekothecat.catconomy.logging.CatLogger
+import ninekothecat.catplugincore.exceptions.CatServiceLoadException
 import ninekothecat.catplugincore.money.interfaces.IBalanceHandler
 import ninekothecat.catplugincore.money.interfaces.ICurrencyPrefix
 import ninekothecat.catplugincore.utils.config.loadConfigurationFromDataFolder
@@ -34,6 +36,7 @@ import java.io.File
 import java.sql.SQLException
 import java.util.*
 import java.util.logging.Logger
+import kotlin.reflect.KClass
 
 class Catconomy : JavaPlugin() {
     override fun onLoad() {
@@ -61,22 +64,45 @@ class Catconomy : JavaPlugin() {
         Metrics(this, pluginID)
         // Plugin startup logic
         Companion.logger = this.logger
+        this.logger.info("Loading config.yml ...")
         val configFile = File(dataFolder, "config.yml")
         if (!configFile.exists()) {
             saveDefaultConfig()
         }
-        Companion.logger!!.info("Loading services...")
+        this.logger.info("Loading services...")
         if (loadServices()) return
         catEconomyCommandHandler = CatEconomyCommandHandler()
         val catPlayerJoinHandler = CatPlayerJoinHandler(this.config.getDouble("starting_amount", 1000.0))
         registerBukkitCommands()
-        makeCatConomyCommand("give", Bukkit.getPluginManager().getPermission("catconomy.give"))
-        makeCatConomyCommand("take", Bukkit.getPluginManager().getPermission("catconomy.subtract"))
-        makeCatConomyCommand("info", Bukkit.getPluginManager().getPermission("catconomy.info"))
-        catEconomyCommandHandler!!["give"]!!.executor = GiveCommandExecutor()
-        catEconomyCommandHandler!!["take"]!!.executor = TakeCommandExecutor()
-        catEconomyCommandHandler!!["info"]!!.executor = InfoCommandExecutor()
+        registerCatConomyCommands()
         server.pluginManager.registerEvents(catPlayerJoinHandler, this)
+    }
+
+    private fun registerCatConomyCommands() {
+        makeCatConomyCommandWithExecutor(
+            "give",
+            Bukkit.getPluginManager().getPermission("catconomy.give"),
+            GiveCommandExecutor()
+        )
+        makeCatConomyCommandWithExecutor(
+            "take",
+            Bukkit.getPluginManager().getPermission("catconomy.subtract"),
+            TakeCommandExecutor()
+        )
+        makeCatConomyCommandWithExecutor(
+            "info",
+            Bukkit.getPluginManager().getPermission("catconomy.info"),
+            InfoCommandExecutor()
+        )
+    }
+
+    private fun makeCatConomyCommandWithExecutor(
+        name: String,
+        permission: Permission,
+        executor: ICatEconomyCommandExecutor
+    ) {
+        makeCatConomyCommand(name, permission)
+        catEconomyCommandHandler!![name]!!.executor = executor
     }
 
     private fun registerBukkitCommands() {
@@ -88,43 +114,25 @@ class Catconomy : JavaPlugin() {
             CatEconomyCommandHandlerAutoCompleter()
     }
 
+
+    @Throws(CatServiceLoadException::class)
+    private fun <T : Any> loadService(clazz: KClass<T>): T =
+        server.servicesManager.load(clazz.java) ?: throw CatServiceLoadException(clazz.java)
+
     private fun loadServices(): Boolean {
-        val servicesManager = server.servicesManager
-        balanceHandler = servicesManager.load(
-            IBalanceHandler::class.java
-        )
-        if (balanceHandler == null) {
-            Companion.logger!!.severe("Balance handler couldn't be loaded")
+        try {
+            balanceHandler = loadService(IBalanceHandler::class)
+            iCatLogger = loadService(ICatLogger::class)
+            permissionGuard = loadService(IPermissionGuard::class)
+            database = loadService(IDatabase::class)
+            prefix = loadService(ICurrencyPrefix::class)
+        } catch (catServiceLoadException: CatServiceLoadException) {
+            this.logger.severe(catServiceLoadException.stackTraceToString())
             server.pluginManager.disablePlugin(this)
             return true
         }
-        iCatLogger = servicesManager.load(ICatLogger::class.java)
-        if (iCatLogger == null) {
-            Companion.logger!!.severe("Logger could not be loaded")
-            server.pluginManager.disablePlugin(this)
-            return true
-        }
-        permissionGuard = servicesManager.load(IPermissionGuard::class.java)
-        if (permissionGuard == null) {
-            Companion.logger!!.severe("permission guard could not be loaded")
-            server.pluginManager.disablePlugin(this)
-            return true
-        }
-        database = servicesManager.load(IDatabase::class.java)
-        if (database == null) {
-            Companion.logger!!.severe("database could not be loaded")
-            server.pluginManager.disablePlugin(this)
-            return true
-        }
-        prefix = servicesManager.load(
-            ICurrencyPrefix::class.java
-        )
-        if (prefix == null) {
-            Companion.logger!!.severe("prefix could not be loaded")
-            server.pluginManager.disablePlugin(this)
-            return true
-        }
-        Companion.logger!!.info("Loaded all services!")
+
+        this.logger.info("Loaded all services!")
         return false
     }
 
@@ -180,6 +188,12 @@ class Catconomy : JavaPlugin() {
         }
     }
 
+    private fun makeCatConomyCommand(name: String, permission: Permission) {
+        val catEconomyCommand = CatEconomyCommand()
+        catEconomyCommand.permission = permission
+        catEconomyCommandHandler!!.put(name, catEconomyCommand)
+    }
+
     companion object {
         var permissionGuard: IPermissionGuard? = null
         var database: IDatabase? = null
@@ -191,12 +205,6 @@ class Catconomy : JavaPlugin() {
         var vaultActive = false
         fun getBalanceHandler(): IBalanceHandler? {
             return balanceHandler
-        }
-
-        private fun makeCatConomyCommand(name: String, permission: Permission) {
-            val catEconomyCommand = CatEconomyCommand()
-            catEconomyCommand.permission = permission
-            catEconomyCommandHandler!!.put(name, catEconomyCommand)
         }
     }
 }

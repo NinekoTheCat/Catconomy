@@ -1,8 +1,9 @@
 package ninekothecat.catconomy.commands.catconomycommand
 
 import ninekothecat.catconomy.Catconomy
-import org.bukkit.command.*
-import java.util.*
+import org.bukkit.command.Command
+import org.bukkit.command.CommandSender
+import org.bukkit.command.TabCompleter
 
 class CatEconomyCommandHandlerAutoCompleter : TabCompleter {
     override fun onTabComplete(

@@ -1,8 +1,9 @@
 package ninekothecat.catconomy.commands.catconomycommand
 
 import org.bukkit.ChatColor
-import org.bukkit.command.*
-import java.util.*
+import org.bukkit.command.Command
+import org.bukkit.command.CommandExecutor
+import org.bukkit.command.CommandSender
 
 class CatEconomyCommandHandler : CommandExecutor {
     val commands = HashMap<String, CatEconomyCommand>()

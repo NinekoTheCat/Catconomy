@@ -11,7 +11,6 @@ import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
-import java.text.MessageFormat
 import java.util.*
 
 class DepositCommandExecutor : CommandExecutor {
@@ -41,8 +40,8 @@ class DepositCommandExecutor : CommandExecutor {
                         amount,
                         sender.uniqueId,
                         involved,
-                        "Transferred $amount from ${sender.displayName} to ${player.displayName}"
-                        , JavaPlugin.getProvidingPlugin(Catconomy::class.java)
+                        "Transferred $amount from ${sender.displayName} to ${player.displayName}",
+                        JavaPlugin.getProvidingPlugin(Catconomy::class.java)
                     )
                     when (Catconomy.getBalanceHandler()!!.doTransaction(catTransaction)) {
                         TransactionResult.LACK_OF_PERMS -> {
