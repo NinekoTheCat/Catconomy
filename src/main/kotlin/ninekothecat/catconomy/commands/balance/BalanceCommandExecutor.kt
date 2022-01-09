@@ -3,15 +3,16 @@ package ninekothecat.catconomy.commands.balance
 import ninekothecat.catconomy.Catconomy
 import ninekothecat.catplugincore.utils.player.getPlayerFromName
 import org.bukkit.ChatColor
-import org.bukkit.command.*
+import org.bukkit.command.Command
+import org.bukkit.command.CommandExecutor
+import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import java.text.MessageFormat
 
 class BalanceCommandExecutor : CommandExecutor {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<String>): Boolean {
         val shortPrefix: String = Catconomy.prefix!!.shortPrefix
         if (!sender.hasPermission("catconomy.balance")) {
-            sender.sendMessage(ChatColor.RED.toString() + "You are not authorised to do that")
+            sender.sendMessage("${ChatColor.RED}You are not authorised to do that")
             return false
         }
         return when (args.size) {
@@ -31,12 +32,7 @@ class BalanceCommandExecutor : CommandExecutor {
         val player = sender as Player
         val moneyAmount =
             Catconomy.getBalanceHandler()!!.getBalance(player.uniqueId).toString()
-        sender.sendMessage(
-            MessageFormat.format(
-                "{0}Your balance is {1} {2}",
-                ChatColor.YELLOW, ChatColor.GOLD.toString() + moneyAmount, ChatColor.AQUA.toString() + shortPrefix
-            )
-        )
+        sender.sendMessage("${ChatColor.YELLOW}Your balance is ${ChatColor.GOLD}${moneyAmount} ${ChatColor.AQUA}${shortPrefix}")
     }
 
     private fun getOtherPlayersMoneyAmount(sender: CommandSender, args: Array<String>, shortPrefix: String) {
@@ -44,19 +40,9 @@ class BalanceCommandExecutor : CommandExecutor {
         if (player != null && Catconomy.getBalanceHandler()!!.userExists(player.uniqueId)) {
             val moneyAmount =
                 Catconomy.getBalanceHandler()!!.getBalance(player.uniqueId).toString()
-            sender.sendMessage(
-                MessageFormat.format(
-                    "{0}{1}s balance is : {2}{3} {4}{5}",
-                    ChatColor.YELLOW,
-                    player.displayName,
-                    ChatColor.GOLD,
-                    moneyAmount,
-                    ChatColor.AQUA,
-                    shortPrefix
-                )
-            )
+            sender.sendMessage("${ChatColor.YELLOW}${player.displayName}'s balance is : ${ChatColor.GOLD}${moneyAmount} ${ChatColor.AQUA}$shortPrefix")
         } else {
-            sender.sendMessage(MessageFormat.format("{0} Does not exist", ChatColor.GOLD.toString() + args[0]))
+            sender.sendMessage("${ChatColor.GOLD}${args[0]} Does not exist")
         }
     }
 }

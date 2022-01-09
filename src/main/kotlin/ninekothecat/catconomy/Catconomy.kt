@@ -17,13 +17,13 @@ import ninekothecat.catconomy.defaultImplementations.database.CatMapDBDatabase
 import ninekothecat.catconomy.defaultImplementations.database.SQL.CatSQLDatabase
 import ninekothecat.catconomy.enums.DefaultDatabaseType
 import ninekothecat.catconomy.eventlisteners.CatPlayerJoinHandler
-import ninekothecat.catplugincore.exceptions.CatServiceLoadException
 import ninekothecat.catconomy.integrations.CatVaultIntegration
 import ninekothecat.catconomy.interfaces.ICatEconomyCommandExecutor
 import ninekothecat.catconomy.interfaces.ICatLogger
 import ninekothecat.catconomy.interfaces.IDatabase
 import ninekothecat.catconomy.interfaces.IPermissionGuard
 import ninekothecat.catconomy.logging.CatLogger
+import ninekothecat.catplugincore.exceptions.CatServiceLoadException
 import ninekothecat.catplugincore.money.interfaces.IBalanceHandler
 import ninekothecat.catplugincore.money.interfaces.ICurrencyPrefix
 import ninekothecat.catplugincore.utils.config.loadConfigurationFromDataFolder

@@ -86,11 +86,11 @@ class CatBalanceHandler(private val doLogs: Boolean) : IBalanceHandler {
                 return TransactionResult.USER_DOES_NOT_EXIST
             }
             val fromUserMoney = getBalanceStatic(fromUser)
-            if (fromUserMoney - amount < 0){
+            if (fromUserMoney - amount < 0) {
                 return TransactionResult.INSUFFICIENT_AMOUNT_OF_CURRENCY
             }
             val toUserMoney = getBalanceStatic(toUser)
-            Catconomy.database!!.setUserBalance(fromUser,fromUserMoney - amount)
+            Catconomy.database!!.setUserBalance(fromUser, fromUserMoney - amount)
             Catconomy.database!!.setUserBalance(toUser, toUserMoney + amount)
             return TransactionResult.SUCCESS
         }
