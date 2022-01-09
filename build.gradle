@@ -24,16 +24,17 @@ repositories {
 }
 
 dependencies {
+    implementation group: 'org.jetbrains.kotlinx', name:'kotlinx-coroutines-core', version: '1.6.0'
     implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.16.0'
     implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.16.0'
-    implementation 'org.bstats:bstats-bukkit:2.2.1'
-    implementation 'org.bstats:bstats-base:2.2.1'
+    implementation group: 'org.bstats',name: 'bstats-bukkit',version: '2.2.1'
+    implementation group: 'org.bstats',name:'bstats-base',version:'2.2.1'
     implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.14.1'
     implementation group: 'org.mapdb', name: 'mapdb', version: '3.0.8'
     implementation group: 'org.lz4', name: 'lz4-java', version: '1.8.0'
     implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.27'
-    implementation group: 'ninekothecat' , name: 'catplugincore', version: '0.0.2'
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.0'
+    implementation group: 'ninekothecat' , name: 'catplugincore', version: '0.0.3'
+    implementation group: 'org.jetbrains.kotlin',name:'kotlin-stdlib-jdk8',version:'1.6.0'
     compileOnly group:'org.bukkit', name: 'bukkit', version: '1.12-R0.1-SNAPSHOT'
     compileOnly group:'com.github.MilkBowl', name: 'VaultAPI', version: '1.7'
 
