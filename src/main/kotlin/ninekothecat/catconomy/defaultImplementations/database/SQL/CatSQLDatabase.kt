@@ -74,7 +74,7 @@ class CatSQLDatabase(user: String, password: String, host: String, databaseName:
             }
         } catch (se: SQLException) {
             se.printStackTrace()
-            return 0.0
+            return Catconomy.startingAmount
         }
     }
 

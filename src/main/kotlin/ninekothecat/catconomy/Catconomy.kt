@@ -69,10 +69,11 @@ class Catconomy : JavaPlugin() {
         if (!configFile.exists()) {
             saveDefaultConfig()
         }
+        startingAmount = this.config.getDouble("starting_amount", 1000.0)
         this.logger.info("Loading services...")
         if (loadServices()) return
         catEconomyCommandHandler = CatEconomyCommandHandler()
-        val catPlayerJoinHandler = CatPlayerJoinHandler(this.config.getDouble("starting_amount", 1000.0))
+        val catPlayerJoinHandler = CatPlayerJoinHandler(startingAmount)
         registerBukkitCommands()
         registerCatConomyCommands()
         server.pluginManager.registerEvents(catPlayerJoinHandler, this)
@@ -195,6 +196,7 @@ class Catconomy : JavaPlugin() {
     }
 
     companion object {
+        var startingAmount : Double= 1000.0
         var permissionGuard: IPermissionGuard? = null
         var database: IDatabase? = null
         var logger: Logger? = null

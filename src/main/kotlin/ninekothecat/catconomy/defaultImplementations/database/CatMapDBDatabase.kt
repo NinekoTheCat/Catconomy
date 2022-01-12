@@ -40,7 +40,7 @@ class CatMapDBDatabase : IDatabase {
     override fun getUserBalance(user: UUID): Double {
         val db: DB = fileDB.make()
         val userMap = db.hashMap("accounts").createOrOpen() as ConcurrentMap<UUID, Double>
-        val amount = userMap.getOrDefault(user, 0.0)
+        val amount = userMap.getOrDefault(user, Catconomy.startingAmount)
         db.close()
         return amount
     }
