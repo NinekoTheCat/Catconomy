@@ -2,6 +2,7 @@ package ninekothecat.catconomy.commands.balance
 
 import ninekothecat.catconomy.Catconomy
 import ninekothecat.catplugincore.utils.player.getPlayerFromName
+import ninekothecat.catplugincore.utils.sendError
 import org.bukkit.ChatColor
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -16,10 +17,13 @@ class BalanceCommandExecutor : CommandExecutor {
             return false
         }
         return when (args.size) {
-            0 -> {
-                getSelfMoneyAmount(sender, shortPrefix)
-                true
-            }
+            0 -> if (sender is Player){
+                    getSelfMoneyAmount(sender, shortPrefix)
+                    true
+                }else {
+                    sendError("You can't check the balance of yourself because you aren't a player", sender)
+                    false
+                }
             1 -> {
                 getOtherPlayersMoneyAmount(sender, args, shortPrefix)
                 true
@@ -29,10 +33,13 @@ class BalanceCommandExecutor : CommandExecutor {
     }
 
     private fun getSelfMoneyAmount(sender: CommandSender, shortPrefix: String) {
-        val player = sender as Player
-        val moneyAmount =
-            Catconomy.getBalanceHandler()!!.getBalance(player.uniqueId).toString()
-        sender.sendMessage("${ChatColor.YELLOW}Your balance is ${ChatColor.GOLD}${moneyAmount} ${ChatColor.AQUA}${shortPrefix}")
+        if (sender is Player) {
+            val moneyAmount =
+                Catconomy.getBalanceHandler()!!.getBalance(sender.uniqueId).toString()
+            sender.sendMessage("${ChatColor.YELLOW}Your balance is ${ChatColor.GOLD}${moneyAmount} ${ChatColor.AQUA}${shortPrefix}")
+        }else {
+            sendError("You can't check your own balance, if you aren't a player",sender)
+        }
     }
 
     private fun getOtherPlayersMoneyAmount(sender: CommandSender, args: Array<String>, shortPrefix: String) {
