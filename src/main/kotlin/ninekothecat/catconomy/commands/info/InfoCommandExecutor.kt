@@ -8,15 +8,18 @@ import org.bukkit.command.CommandSender
 import org.bukkit.plugin.java.JavaPlugin
 
 class InfoCommandExecutor : ICatEconomyCommandExecutor {
+    companion object {
+        private val listOfMessages = buildList {
+            val plugin = JavaPlugin.getProvidingPlugin(Catconomy::class.java)
+            add("${ChatColor.RESET}Catconomy version = ${ChatColor.GOLD}${plugin.description.version}")
+            add("${ChatColor.RESET}Vault integration active = ${ChatColor.GOLD}${Catconomy.vaultActive}")
+            add("${ChatColor.RESET}Database active = ${ChatColor.GOLD}${Catconomy.database!!.javaClass.simpleName}")
+            add("${ChatColor.RESET}Prefix active = long: ${Catconomy.prefix!!.longPrefix} short: ${Catconomy.prefix!!.shortPrefix}")
+        }
+    }
+
     override fun onCommand(sender: CommandSender, cmd: Command, commandLabel: String, args: Array<String>): Boolean {
-        sender.sendMessage(
-            "${ChatColor.RESET}Catconomy version = ${ChatColor.GOLD}" + JavaPlugin.getProvidingPlugin(
-                Catconomy::class.java
-            ).description.version
-        )
-        sender.sendMessage("${ChatColor.RESET}Vault integration active = ${ChatColor.GOLD}${Catconomy.vaultActive}")
-        sender.sendMessage("${ChatColor.RESET}Database active = ${ChatColor.GOLD}${Catconomy.database!!.javaClass.simpleName}")
-        sender.sendMessage("${ChatColor.RESET}Prefix active = long: ${Catconomy.prefix!!.longPrefix} short: ${Catconomy.prefix!!.shortPrefix}")
+        listOfMessages.forEachIndexed { _, message -> sender.sendMessage(message) }
         return true
     }
 }
