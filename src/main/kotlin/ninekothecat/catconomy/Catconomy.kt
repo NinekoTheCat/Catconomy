@@ -213,6 +213,7 @@ class Catconomy : JavaPlugin() {
     override fun onDisable() {
         if (CatMapDBDatabase.db != null){
             CatMapDBDatabase.db!!.close()
+            CatMapDBDatabase.db = null
         }
         setDefaults()
         super.onDisable()
