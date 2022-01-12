@@ -209,4 +209,22 @@ class Catconomy : JavaPlugin() {
             return balanceHandler
         }
     }
+
+    override fun onDisable() {
+        if (CatMapDBDatabase.db != null){
+            CatMapDBDatabase.db!!.close()
+        }
+        setDefaults()
+        super.onDisable()
+    }
+    private fun setDefaults(){
+         startingAmount = 1000.0
+         permissionGuard = null
+         database = null
+         prefix = null
+         catEconomyCommandHandler= null
+        balanceHandler = null
+         iCatLogger =  null
+         vaultActive = false
+    }
 }
