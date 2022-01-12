@@ -28,6 +28,14 @@ If applicable, add screenshots to help explain your problem.
 — Java:[e.g., openjdk version “1.8.0_312”] (get this by running `java -version`)
 —Version [e.g., 0.0.10]
 
+**CatConomy Info (run `/cc info` to get)**
+
+**Output of `/vault-info`**
+
+**List of plugins if relevant**
+
+
+
 **CCLogs**
 Include the log file that is in ./CCLogs
 
