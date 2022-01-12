@@ -57,8 +57,8 @@ class CatMapDBDatabase : IDatabase {
     }
 
     init {
-        val dbFile = File(JavaPlugin.getProvidingPlugin(Catconomy::class.java).dataFolder, "accounts.db")
         if (db == null){
+            val dbFile = File(JavaPlugin.getProvidingPlugin(Catconomy::class.java).dataFolder, "accounts.db")
             db = fileDB(dbFile).make()
         }
     }
